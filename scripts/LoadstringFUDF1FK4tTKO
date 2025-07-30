@@ -1,0 +1,148 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
+
+local window = library:AddWindow("Muscle Legends V2 Private Script", {
+	main_color = Color3.fromRGB(0, 0, 0), -- Color
+	min_size = Vector2.new(500, 500), -- Size of the gui
+	can_resize = true, -- true or false
+})
+
+local features = window:AddTab("Main") -- Name of tab
+features:Show() -- shows the tab
+
+local folder = features:AddFolder("Auto Brawl")
+folder:AddSwitch("Auto Join Brawl God Mode")
+folder:AddSwitch("Auto Join Brawl Farming")
+
+
+local folder = features:AddFolder("Auto Gym")
+folder:AddLabel("Muscle King")
+folder:AddSwitch("Auto Muscle King Bench")
+folder:AddSwitch("Auto Muscle King Squat")
+folder:AddSwitch("Auto Muscle King Boulder")
+folder:AddSwitch("Auto Muscle King Lift")
+folder:AddLabel("Legends Gym")
+folder:AddSwitch("Auto Legends Press")
+folder:AddSwitch("Auto Legends Squat")
+folder:AddSwitch("Auto Legends Lift")
+folder:AddSwitch("Auto Legends Lift")
+
+local folder = features:AddFolder("Auto Glitch/Weight+Punch")
+folder:AddLabel("Weight + Punch")
+folder:AddSwitch("Auto Pushup + Auto Punch Rock")
+folder:AddSwitch("Auto Situp + Auto Punch Rock")
+folder:AddSwitch("Auto Handstands + Auto Punch Rock")
+folder:AddSwitch("Auto Weight")
+folder:AddLabel("Auto Glitch")
+folder:AddSwitch("Auto Glitch | Jungle Rock 10M")
+folder:AddSwitch("Auto Glitch | Muscle King Rock 5M")
+folder:AddSwitch("Auto Glitch | Legends Rock 1M")
+folder:AddSwitch("Auto Punch | Click Me")
+
+local features = window:AddTab("Farm") -- Name of tab
+features:Show() -- shows the tab
+
+local folder = features:AddFolder("Auto Tools")
+folder:AddSwitch("Auto Weight")
+folder:AddSwitch("Auto Pushups")
+folder:AddSwitch("Auto Situps")
+folder:AddSwitch("Auto Handstands")
+
+local folder = features:AddFolder("Fast Tools")
+folder:AddSwitch("Fast Punch")
+folder:AddSwitch("Fast Weight")
+folder:AddSwitch("Fast Pushups")
+folder:AddSwitch("Fast Situps")
+folder:AddSwitch("Fast Handstands")
+
+
+local folder = features:AddFolder("Farm Rebirths")
+folder:AddSwitch("Auto Muscle King")
+folder:AddSwitch("Auto Weight")
+folder:AddSwitch("Auto size 2")
+folder:AddSwitch("Auto rebirth")
+
+
+local features = window:AddTab("Eggs") -- Name of tab
+features:Show() -- shows the tab
+
+local dropdown = features:AddDropdown("Eggs", function()
+
+end)
+
+
+local features = window:AddTab("Misc") -- Name of tab
+features:Show() -- shows the tab
+
+
+local features = window:AddTab("Players") -- Name of tab
+features:Show() -- shows the tab
+
+local switch = features:AddSwitch("Anti KnockBack", function(bool)
+
+end)
+switch:Set(false)
+
+local switch = features:AddSwitch("Lock Client Position", function(bool)
+
+end)
+switch:Set(false)
+
+local switch = features:AddSwitch("No Clip", function(bool)
+
+end)
+switch:Set(false)
+
+local switch = features:AddSwitch("Inf Jump", function(bool)
+
+end)
+switch:Set(false)
+
+
+
+local features = window:AddTab("Killing") -- Name of tab
+features:Show() -- shows the tab
+
+local switch = features:AddSwitch("Auto Punch", function(bool)
+
+end)
+switch:Set(false)
+
+local switch = features:AddSwitch("Auto Punch Movement", function(bool)
+
+end)
+switch:Set(false)
+
+
+features:AddTextBox("WhiteList Player", function() 
+
+end)
+
+features:AddButton("Clear WhiteList",function()
+	
+end)
+
+
+local switch = features:AddSwitch("Auto Kill", function(bool)
+
+end)
+switch:Set(false)
+
+local switch = features:AddSwitch("Stop Auto Kill", function(bool)
+
+end)
+switch:Set(false)
+
+
+local features = window:AddTab("Teleports") -- Name of tab
+features:Show() 
+
+
+
+
+local features = window:AddTab("Creds") -- Name of tab
+features:Show() 
+
+
+features:AddLabel("Script Made By Dan")
+features:AddLabel("First Script Made By Myself so stuff could be a bit buggy")
+features:AddLabel("Script Only for me and my dad AKA KingSkillsYT")
