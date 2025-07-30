@@ -1,0 +1,121 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/memejames/elerium-v2-ui-library//main/Library", true))()
+
+local window = library:AddWindow("Muscle Legends V2 Private Script", {
+	main_color = Color3.fromRGB(0, 0, 0), -- Color
+	min_size = Vector2.new(500, 500), -- Size of the gui
+	can_resize = true, -- true or false
+})
+
+local features = window:AddTab("Main") -- Name of tab
+features:Show() -- shows the tab
+
+local folder = features:AddFolder("Auto Brawl")
+folder:AddSwitch("Auto Join Brawl God Mode")
+folder:AddSwitch("Auto Join Brawl Farming")
+
+local folder = features:AddFolder("Auto Gym")
+folder:AddLabel("Muscle King")
+folder:AddSwitch("Auto Muscle King Bench")
+folder:AddSwitch("Auto Muscle King Squat")
+folder:AddSwitch("Auto Muscle King Boulder")
+folder:AddSwitch("Auto Muscle King Lift")
+folder:AddLabel("Legends Gym")
+folder:AddSwitch("Auto Legends Press")
+folder:AddSwitch("Auto Legends Squat")
+folder:AddSwitch("Auto Legends Lift")
+folder:AddSwitch("Auto Legends Lift")
+
+local folder = features:AddFolder("Auto Glitch/Weight+Punch")
+folder:AddSwitch("Anti Knockback")
+folder:AddLabel("-----| Weight + Punch |-----")
+folder:AddSwitch("Auto Pushup + Auto Punch Rock")
+folder:AddSwitch("Auto Situp + Auto Punch Rock")
+folder:AddSwitch("Auto Handstands + Auto Punch Rock")
+folder:AddSwitch("Auto Weight")
+folder:AddLabel("-----| Auto Glitch |-----")
+folder:AddSwitch("Auto Glitch | Jungle Rock 10M")
+folder:AddSwitch("Auto Glitch | Muscle King Rock 5M")
+folder:AddSwitch("Auto Glitch | Legends Rock 1M")
+folder:AddSwitch("Auto Punch | Click Me")
+
+local features = window:AddTab("Farm") -- Name of tab
+features:Show() -- shows the tab
+
+local folder = features:AddFolder("Auto Glitch/Weight+Punch")
+folder:AddLabel("Weight + Punch")
+
+
+
+
+
+
+
+
+local features = window:AddTab("Stats") -- Name of tab
+features:Show() -- shows the tab
+
+features:AddLabel("May not work since im stupid at lua ")
+
+
+
+
+
+local features = window:AddTab("Misc") -- Name of tab
+features:Show() -- shows the tab
+
+local features = window:AddTab("Eggs") -- Name of tab
+features:Show() -- shows the tab
+
+local features = window:AddTab("Players") -- Name of tab
+features:Show() -- shows the tab
+
+
+
+
+
+
+
+
+
+
+local features = window:AddTab("Killing") -- Name of tab
+features:Show() -- shows the tab
+
+local switch = features:AddSwitch("Auto Punch", function(bool)
+
+end)
+switch:Set(false)
+local switch = features:AddSwitch("Auto Punch Movement", function(bool)
+
+end)
+switch:Set(false)
+local switch = features:AddSwitch("Fast Punch", function(bool)
+
+end)
+switch:Set(false)
+
+
+
+
+local switch = features:AddSwitch("Auto Kill", function(bool)
+
+end)
+switch:Set(false)
+
+
+
+
+
+
+
+
+local features = window:AddTab("Teleport") -- Name of tab
+features:Show() -- shows the tab
+
+
+local features = window:AddTab("Creds") -- Name of tab
+features:Show() -- shows the tab
+
+
+features:AddLabel("Script Made By Dan")
+features:AddLabel("First Script Made By Myself so stuff could be a bit buggy")
