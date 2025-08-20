@@ -1,0 +1,49 @@
+--// UI Library Setup
+local DrRayLibrary
+    DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+end)
+
+local window
+local successWindow, windowErr = pcall(function()
+    window = DrRayLibrary:Load("XFrameHub (Paid)", "Default")
+end)
+if not successWindow then
+    warn("INIT: Failed to create DrRay window: " .. tostring(windowErr))
+    return
+end
+
+--// Main Tab
+local mainTab
+local successMain, mainErr = pcall(function()
+    mainTab = DrRayLibrary.newTab("Main", "ImageIdHere")
+end)
+if not successMain then
+    warn("MAIN: Failed to create Main tab: " .. tostring(mainErr))
+    return
+end
+
+local successSlider, sliderErr = pcall(function()
+    mainTab.newSlider("WalkSpeed", "Adjust player speed", 1000, false, function(num)
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = num
+            print("MAIN: WalkSpeed set to: " .. num)
+        else
+            print("MAIN: No character or humanoid for WalkSpeed")
+        end
+    end)
+end)
+if not successSlider then
+    warn("MAIN: Failed to create WalkSpeed slider: " .. tostring(sliderErr))
+end
+
+local successAutoLift, autoLiftErr = pcall(function()
+    mainTab.newButton("Free AutoLift Gamepass", "Enable auto lift", function()
+        local autoLift = player:WaitForChild("autoLiftEnabled", 5)
+        if autoLift then
+            autoLift.Value = true
+            print("MAIN: AutoLift enabled!")
+        else
+            print("MAIN: autoLiftEnabled not found")
+        end
+    end)
+end)
