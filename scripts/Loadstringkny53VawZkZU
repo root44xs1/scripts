@@ -1,0 +1,329 @@
+local library =
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/iblameaabis/Ililililililililililililil/refs/heads/main/W%20UI", true))()
+
+local window = library:AddWindow("9SS Private Hub | By Iblameaabis", {
+    main_color = Color3.fromRGB(0, 0, 0),
+    min_size = Vector2.new(470, 470),
+    can_resize = false,
+})
+
+local farmingTab = window:AddTab("MainFarm")
+farmingTab:Show()
+
+local autoPunchSwitch =
+    farmingTab:AddSwitch(
+    "Auto Punch",
+    function(toggleState)
+        if toggleState then
+            local player = game.Players.LocalPlayer
+            local playerName = player.Name
+            local punchTool =
+                player.Backpack:FindFirstChild("Punch") or
+                game.Workspace:FindFirstChild(playerName):FindFirstChild("Punch")
+
+            _G.punchanim = true
+
+            while _G.punchanim do
+                if punchTool then
+                    if punchTool.Parent ~= game.Workspace:FindFirstChild(playerName) then
+                        punchTool.Parent = game.Workspace:FindFirstChild(playerName)
+                    end
+                    punchTool:Activate()
+                    wait()
+                else
+                    warn("Punch tool not found")
+                    _G.punchanim = false
+                end
+            end
+        else
+            _G.punchanim = false
+        end
+    end
+)
+autoPunchSwitch:Set(false)
+
+local fastPunchSwitch =
+    farmingTab:AddSwitch(
+    "Fast Punch",
+    function(toggleState)
+        local player = game.Players.LocalPlayer
+    local punch = player.Backpack:FindFirstChild("Punch")
+    local character = game.Workspace:FindFirstChild(player.Name)
+    local punch1
+
+    if character then
+        punch1 = character:FindFirstChild("Punch")
+    end
+
+    local attackTime = 0 -- Fast punch time
+
+    if punch and punch:FindFirstChild("attackTime") then
+        punch.attackTime.Value = attackTime
+    elseif punch1 and punch1:FindFirstChild("attackTime") then
+        punch1.attackTime.Value = attackTime
+    end
+end)
+
+farmingTab:AddLabel("----------")
+
+farmingTab:AddSwitch("Hide Frames", function(bool)
+  for _, frameName in ipairs({"strengthFrame", "durabilityFrame", "agilityFrame"}) do
+        local frame = game:GetService("ReplicatedStorage"):FindFirstChild(frameName)
+        if frame and frame:IsA("GuiObject") then
+            frame.Visible = not bool
+        end
+    end
+end)
+
+local autoStrengthSwitch =
+    farmingTab:AddSwitch(
+    "Gain Strength",
+    function(toggleState)
+        isAutoStrength = toggleState
+        local player = game.Players.LocalPlayer
+        local backpack = player:FindFirstChild("Backpack")
+
+        while isAutoStrength do
+            wait(0.01)
+
+            if backpack then
+                local Weight = backpack:FindFirstChild("Weight")
+                if Weight then
+                    player.Character.Humanoid:EquipTool(Weight)
+                end
+            end
+
+            local args = {[1] = "rep"}
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer(unpack(args))
+        end
+
+        if not isAutoStrength then
+            local equippedTool = player.Character:FindFirstChildOfClass("Tool")
+            if equippedTool and equippedTool.Name == "Weight" then
+                equippedTool.Parent = backpack
+            end
+        end
+    end
+)
+autoStrengthSwitch:Set(false)
+
+farmingTab:AddSwitch("Super Strength (Insane Speed)", function(Value)
+    getgenv().isGrinding = Value
+
+    if not Value then return end
+
+    task.spawn(function()
+        while getgenv().isGrinding do
+            for i = 1, 5000 do
+                game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+farmingTab:AddSwitch("Super Duper Fast Grind ", function()
+  local player = game:GetService("Players").LocalPlayer
+  local isGrinding = true
+  for i = 1, 20000 do
+    task.spawn(function()
+      while isGrinding do
+        player.muscleEvent:FireServer("rep")
+        task.wait(0.001)
+      end
+    end) 
+  end 
+end)
+
+farmingTab:AddSwitch("Fast Rebirth", function(bool)
+    fastRebirth = bool
+
+    if fastRebirth then
+        spawn(function()
+            local a = game:GetService("ReplicatedStorage")
+            local b = game:GetService("Players")
+            local c = b.LocalPlayer
+
+            local d = function(e)
+                local f = c.petsFolder
+                for g, h in pairs(f:GetChildren()) do
+                    if h:IsA("Folder") then
+                        for i, j in pairs(h:GetChildren()) do
+                            a.rEvents.equipPetEvent:FireServer("unequipPet", j)
+                        end
+                    end
+                end
+                task.wait(.1)
+            end
+
+            local k = function(l)
+                d()
+                task.wait(.01)
+                for m, n in pairs(c.petsFolder.Unique:GetChildren()) do
+                    if n.Name == l then
+                        a.rEvents.equipPetEvent:FireServer("equipPet", n)
+                    end
+                end
+            end
+
+            local o = function(p)
+                local q = workspace.machinesFolder:FindFirstChild(p)
+                if not q then
+                    for r, s in pairs(workspace:GetChildren()) do
+                        if s:IsA("Folder") and s.Name:find("machines") then
+                            q = s:FindFirstChild(p)
+                            if q then break end
+                        end
+                    end
+                end
+                return q
+            end
+
+            local t = function()
+                local u = game:GetService("VirtualInputManager")
+                u:SendKeyEvent(true, "E", false, game)
+                task.wait(.1)
+                u:SendKeyEvent(false, "E", false, game)
+            end
+
+            while fastRebirth do
+                local v = c.leaderstats.Rebirths.Value
+                local w = 10000 + (5000 * v)
+                if c.ultimatesFolder:FindFirstChild("Golden Rebirth") then
+                    local x = c.ultimatesFolder["Golden Rebirth"].Value
+                    w = math.floor(w * (1 - (x * 0.1)))
+                end
+
+                d()
+                task.wait(.1)
+                k("Swift Samurai")
+
+                while c.leaderstats.Strength.Value < w do
+                    for y = 1, 10 do
+                        c.muscleEvent:FireServer("rep")
+                    end
+                    task.wait()
+                end
+
+                d()
+                task.wait(.1)
+                k("Tribal Overlord")
+
+                local z = o("Jungle Bar Lift")
+                if z and z:FindFirstChild("interactSeat") then
+                    c.Character.HumanoidRootPart.CFrame = z.interactSeat.CFrame * CFrame.new(0, 3, 0)
+                    repeat
+                        task.wait(.1)
+                        t()
+                    until c.Character.Humanoid.Sit
+                end
+
+                local A = c.leaderstats.Rebirths.Value
+                repeat
+                    a.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                    task.wait(.1)
+                until c.leaderstats.Rebirths.Value > A
+
+                task.wait()
+            end
+        end)
+    end
+end)
+
+farmingTab:AddLabel("----Normal----")
+
+local autoPushupsSwitch =
+    farmingTab:AddSwitch(
+    "Auto Fast Pushups",
+    function(toggleState)
+        isAutoPushups = toggleState
+        local player = game.Players.LocalPlayer
+        local backpack = player:FindFirstChild("Backpack")
+
+        while isAutoPushups do
+            wait(0.01)
+
+            if backpack then
+                local Pushups = backpack:FindFirstChild("Pushups")
+                if Pushups then
+                    player.Character.Humanoid:EquipTool(Pushups)
+                end
+            end
+
+            local args = {[1] = "rep"}
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer(unpack(args))
+        end
+
+        if not isAutoPushups then
+            local equippedTool = player.Character:FindFirstChildOfClass("Tool")
+            if equippedTool and equippedTool.Name == "Pushups" then
+                equippedTool.Parent = backpack
+            end
+        end
+    end
+)
+autoPushupsSwitch:Set(false)
+
+local autoSitupsSwitch =
+    farmingTab:AddSwitch(
+    "Auto Fast Situps",
+    function(toggleState)
+        isAutoSitups = toggleState
+        local player = game.Players.LocalPlayer
+        local backpack = player:FindFirstChild("Backpack")
+
+        while isAutoSitups do
+            wait(0.01)
+
+            if backpack then
+                local Situps = backpack:FindFirstChild("Situps")
+                if Situps then
+                    player.Character.Humanoid:EquipTool(Situps)
+                end
+            end
+
+            local args = {[1] = "rep"}
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer(unpack(args))
+        end
+
+        if not isAutoSitups then
+            local equippedTool = player.Character:FindFirstChildOfClass("Tool")
+            if equippedTool and equippedTool.Name == "Situps" then
+                equippedTool.Parent = backpack
+            end
+        end
+    end
+)
+autoSitupsSwitch:Set(false)
+
+local autoHandstandsSwitch =
+    farmingTab:AddSwitch(
+    "Auto Handstands",
+    function(toggleState)
+        isAutoHandstands = toggleState
+        local player = game.Players.LocalPlayer
+        local backpack = player:FindFirstChild("Backpack")
+
+        while isAutoHandstands do
+            wait(0.01)
+
+            if backpack then
+                local Handstands = backpack:FindFirstChild("Handstands")
+                if Handstands then
+                    player.Character.Humanoid:EquipTool(Handstands)
+                end
+            end
+
+            local args = {[1] = "rep"}
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer(unpack(args))
+        end
+
+        if not isAutoHandstands then
+            local equippedTool = player.Character:FindFirstChildOfClass("Tool")
+            if equippedTool and equippedTool.Name == "Handstands" then
+                equippedTool.Parent = backpack
+            end
+        end
+    end
+)
+autoHandstandsSwitch:Set(false)
