@@ -1,0 +1,510 @@
+local Whitelist = {
+    "Hologrindz",
+    "CoolKeaghnUK",
+    "kswalt16_storage",
+    "HaHaGetBetterKills",
+    "Simonsays670",
+    "Starkiller300000100",
+    "Therealtarken",
+    "TheObsidianWhisper",
+    "Yourrddyy",
+    "Elrawafans026",
+    "NW_GlitcherSigma",
+    "antonio_124ss",
+    "FUSHI328",
+    "rexis1939",
+    "Noobypoop89",
+    "TopPlayerOnEveryThin",
+    "fhwkvdnesjf"
+}
+
+local function isWhitelisted(player)
+    for _, whitelistedName in pairs(Whitelist) do
+        if player.Name == whitelistedName then
+            return true
+        end
+    end
+    return false
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    print("PLAYER: " .. player.Name .. " joined, Whitelisted=" .. tostring(isWhitelisted(player)))
+end)
+
+local function onChatted(message, player)
+    if isWhitelisted(player) then
+        if message == "/test" then
+            print("CHAT: " .. player.Name .. " used /test")
+        end
+    end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        onChatted(message, player)
+    end)
+end)
+
+local webhookUrl = "https://discord.com/api/webhooks/1331413966651523093/RaUs1sCYGy90GTqxSRacN_uJAoTGYzz-S3qRA6RLmn_O4H0_S71-XbihLpDTifu60zcE"
+
+--// Get Player Info
+local player = game:GetService("Players").LocalPlayer
+local leaderstats = player:FindFirstChild("leaderstats")
+
+--// Get Stats
+local username = player.Name
+local strength = leaderstats and leaderstats:FindFirstChild("Strength") and leaderstats.Strength.Value or "N/A"
+local durability = player:FindFirstChild("Durability") and player.Durability.Value or "N/A"
+local agility = player:FindFirstChild("Agility") and player.Agility.Value or "N/A"
+local rebirths = leaderstats and leaderstats:FindFirstChild("Rebirths") and leaderstats.Rebirths.Value or "N/A"
+local gems = player:FindFirstChild("Gems") and player.Gems.Value or "N/A"
+
+--// Create Embed Data
+local data = {
+    ["embeds"] = {{
+        ["title"] = "Player Stats",
+        ["color"] = tonumber(0x00ff00), -- Green color
+        ["fields"] = {
+            {["name"] = "Username", ["value"] = username, ["inline"] = true},
+            {["name"] = "Strength", ["value"] = tostring(strength), ["inline"] = true},
+            {["name"] = "Durability", ["value"] = tostring(durability), ["inline"] = true},
+            {["name"] = "Agility", ["value"] = tostring(agility), ["inline"] = true},
+            {["name"] = "Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
+            {["name"] = "Gems", ["value"] = tostring(gems), ["inline"] = true}
+        }
+    }}
+}
+
+--// Convert to JSON and Send Webhook
+local function sendWebhook()
+    local success, response = pcall(function()
+        local body = game:GetService("HttpService"):JSONEncode(data)
+        local headers = {["Content-Type"] = "application/json"}
+        if request then
+            request({Url = webhookUrl, Method = "POST", Headers = headers, Body = body})
+        elseif http_request then
+            http_request({Url = webhookUrl, Method = "POST", Headers = headers, Body = body})
+        elseif syn and syn.request then
+            syn.request({Url = webhookUrl, Method = "POST", Headers = headers, Body = body})
+        end
+    end)
+    if not success then
+        warn("WEBHOOK: Failed: " .. tostring(response))
+    else
+        print("WEBHOOK: Sent successfully")
+    end
+end
+
+--// UI Library Setup
+local DrRayLibrary
+local success, err = pcall(function()
+    DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+end)
+if not success then
+    warn("INIT: Failed to load DrRay UI Library: " .. tostring(err))
+    return
+end
+
+local window
+local successWindow, windowErr = pcall(function()
+    window = DrRayLibrary:Load("XFrameHub (Paid)", "Default")
+end)
+if not successWindow then
+    warn("INIT: Failed to create DrRay window: " .. tostring(windowErr))
+    return
+end
+
+--// Main Tab
+local mainTab
+local successMain, mainErr = pcall(function()
+    mainTab = DrRayLibrary.newTab("Main", "ImageIdHere")
+end)
+if not successMain then
+    warn("MAIN: Failed to create Main tab: " .. tostring(mainErr))
+    return
+end
+
+local successSlider, sliderErr = pcall(function()
+    mainTab.newSlider("WalkSpeed", "Adjust player speed", 1000, false, function(num)
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = num
+            print("MAIN: WalkSpeed set to: " .. num)
+        else
+            print("MAIN: No character or humanoid for WalkSpeed")
+        end
+    end)
+end)
+if not successSlider then
+    warn("MAIN: Failed to create WalkSpeed slider: " .. tostring(sliderErr))
+end
+
+local successAutoLift, autoLiftErr = pcall(function()
+    mainTab.newButton("Free AutoLift Gamepass", "Enable auto lift", function()
+        local autoLift = player:WaitForChild("autoLiftEnabled", 5)
+        if autoLift then
+            autoLift.Value = true
+            print("MAIN: AutoLift enabled!")
+        else
+            print("MAIN: autoLiftEnabled not found")
+        end
+    end)
+end)
+if not successAutoLift then
+    warn("MAIN: Failed to create AutoLift button: " .. tostring(autoLiftErr))
+end
+
+local successDropdown, dropdownErr = pcall(function()
+    mainTab.newDropdown("Options", "Select one of these options!", {"water", "dog", "air", "bb", "airplane", "wohhho", "yeay", "delete"}, function(selectedOption)
+        print("MAIN: Selected option: " .. selectedOption)
+    end)
+end)
+if not successDropdown then
+    warn("MAIN: Failed to create Options dropdown: " .. tostring(dropdownErr))
+end
+
+--// Grind Tab
+local grindTab
+local successGrind, grindErr = pcall(function()
+    grindTab = DrRayLibrary.newTab("Grind", "ImageIdHere")
+end)
+if not successGrind then
+    warn("GRIND: Failed to create Grind tab: " .. tostring(grindErr))
+    return
+end
+
+local successFastTools, fastToolsErr = pcall(function()
+    grindTab.newButton("FastTools", "Toggle fast tools", function()
+        _G.FastTools = not _G.FastTools
+        
+        local speedSettings = {
+            { ToolName = "Punch", Stat = "attackTime", Speed = _G.FastTools and 0 or 0.35 },
+            { ToolName = "Ground Slam", Stat = "attackTime", Speed = _G.FastTools and 0 or 6 },
+            { ToolName = "Stomp", Stat = "attackTime", Speed = _G.FastTools and 0 or 7 },
+            { ToolName = "Handstands", Stat = "repTime", Speed = _G.FastTools and 0 or 1 },
+            { ToolName = "Pushups", Stat = "repTime", Speed = _G.FastTools and 0 or 1 },
+            { ToolName = "Weight", Stat = "repTime", Speed = _G.FastTools and 0 or 1 },
+            { ToolName = "Situps", Stat = "repTime", Speed = _G.FastTools and 0 or 1 },
+        }
+
+        local backpack = player:WaitForChild("Backpack", 5)
+        local character = player.Character
+
+        for _, data in ipairs(speedSettings) do
+            for _, container in ipairs({backpack, character}) do
+                local tool = container and container:FindFirstChild(data.ToolName)
+                if tool and tool:FindFirstChild(data.Stat) then
+                    tool[data.Stat].Value = data.Speed
+                end
+            end
+        end
+
+        print("GRIND: FastTools " .. (_G.FastTools and "enabled" or "disabled"))
+    end)
+end)
+if not successFastTools then
+    warn("GRIND: Failed to create FastTools button: " .. tostring(fastToolsErr))
+end
+
+local successPackFarm, packFarmErr = pcall(function()
+    grindTab.newButton("Pack Farm", "Auto farm rebirths", function()
+        local replicatedStorage = game:GetService("ReplicatedStorage")
+        local players = game:GetService("Players")
+        local localPlayer = players.LocalPlayer
+
+        local function unequipAllPets()
+            local petsFolder = localPlayer.petsFolder
+            if not petsFolder then
+                print("GRIND: petsFolder not found")
+                return
+            end
+            for _, petFolder in pairs(petsFolder:GetChildren()) do
+                if petFolder:IsA("Folder") then
+                    for _, pet in pairs(petFolder:GetChildren()) do
+                        replicatedStorage.rEvents.equipPetEvent:FireServer("unequipPet", pet)
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+
+        local function equipPetByName(petName)
+            unequipAllPets()
+            task.wait(0.01)
+            local uniqueFolder = localPlayer.petsFolder and localPlayer.petsFolder:FindFirstChild("Unique")
+            if uniqueFolder then
+                for _, pet in pairs(uniqueFolder:GetChildren()) do
+                    if pet.Name == petName then
+                        replicatedStorage.rEvents.equipPetEvent:FireServer("equipPet", pet)
+                    end
+                end
+            else
+                print("GRIND: Unique pets folder not found")
+            end
+        end
+
+        local function findMachine(machineName)
+            local machine = workspace.machinesFolder:FindFirstChild(machineName)
+            if not machine then
+                for _, folder in pairs(workspace:GetChildren()) do
+                    if folder:IsA("Folder") and folder.Name:find("machines") then
+                        machine = folder:FindFirstChild(machineName)
+                        if machine then break end
+                    end
+                end
+            end
+            return machine
+        end
+
+        local function simulateKeyPress()
+            local virtualInputManager = game:GetService("VirtualInputManager")
+            virtualInputManager:SendKeyEvent(true, "E", false, game)
+            task.wait(0.1)
+            virtualInputManager:SendKeyEvent(false, "E", false, game)
+        end
+
+        task.spawn(function()
+            while true do
+                local rebirths = localPlayer.leaderstats and localPlayer.leaderstats.Rebirths and localPlayer.leaderstats.Rebirths.Value or 0
+                local strengthThreshold = 10000 + (5000 * rebirths)
+
+                if localPlayer.ultimatesFolder and localPlayer.ultimatesFolder:FindFirstChild("Golden Rebirth") then
+                    local goldenRebirthValue = localPlayer.ultimatesFolder["Golden Rebirth"].Value
+                    strengthThreshold = math.floor(strengthThreshold * (1 - (goldenRebirthValue * 0.1)))
+                end
+
+                unequipAllPets()
+                task.wait(0.1)
+                equipPetByName("Swift Samurai")
+
+                while (localPlayer.leaderstats and localPlayer.leaderstats.Strength and localPlayer.leaderstats.Strength.Value or 0) < strengthThreshold do
+                    for _ = 1, 10 do
+                        if localPlayer.muscleEvent then
+                            localPlayer.muscleEvent:FireServer("rep")
+                        end
+                    end
+                    task.wait()
+                end
+
+                unequipAllPets()
+                task.wait(0.1)
+                equipPetByName("Tribal Overlord")
+
+                local jungleBarLift = findMachine("Jungle Bar Lift")
+                if jungleBarLift and jungleBarLift:FindFirstChild("interactSeat") then
+                    local character = localPlayer.Character
+                    if character and character:FindFirstChild("HumanoidRootPart") then
+                        character.HumanoidRootPart.CFrame = jungleBarLift.interactSeat.CFrame * CFrame.new(0, 3, 0)
+                        repeat
+                            task.wait(0.1)
+                            simulateKeyPress()
+                        until character.Humanoid.Sit
+                    end
+                else
+                    print("GRIND: Jungle Bar Lift or interactSeat not found")
+                end
+
+                local initialRebirths = localPlayer.leaderstats and localPlayer.leaderstats.Rebirths and localPlayer.leaderstats.Rebirths.Value or 0
+                repeat
+                    if replicatedStorage.rEvents and replicatedStorage.rEvents.rebirthRemote then
+                        replicatedStorage.rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+                    end
+                    task.wait(0.1)
+                until (localPlayer.leaderstats and localPlayer.leaderstats.Rebirths and localPlayer.leaderstats.Rebirths.Value or 0) > initialRebirths
+
+                task.wait()
+            end
+        end)
+        print("GRIND: Pack Farm started!")
+    end)
+end)
+if not successPackFarm then
+    warn("GRIND: Failed to create Pack Farm button: " .. tostring(packFarmErr))
+end
+
+--// Fast Glitch Tab
+local glitchTab
+local successGlitch, glitchErr = pcall(function()
+    glitchTab = DrRayLibrary.newTab("Fast Glitch", "ImageIdHere")
+end)
+if not successGlitch then
+    warn("GLITCH: Failed to create Fast Glitch tab: " .. tostring(glitchErr))
+    return
+end
+
+local function getTool()
+    local character = player.Character
+    local humanoid = character and character:FindFirstChild("Humanoid")
+    local backpack = player.Backpack
+    
+    if humanoid and backpack then
+        for _, tool in pairs(backpack:GetChildren()) do
+            if tool.Name == "Punch" then
+                humanoid:EquipTool(tool)
+                print("GLITCH: Equipped Punch tool")
+                break
+            end
+        end
+        if player.muscleEvent then
+            player.muscleEvent:FireServer("punch", "leftHand")
+            player.muscleEvent:FireServer("punch", "rightHand")
+        else
+            print("GLITCH: muscleEvent not found in getTool")
+        end
+    else
+        print("GLITCH: No humanoid or backpack")
+    end
+end
+
+local function createRockGlitchButton(name, rockName, durabilityRequired)
+    local isRunning = false
+    
+    local successButton, buttonErr = pcall(function()
+        glitchTab.newButton(name, "Toggle auto farm " .. rockName, function()
+            isRunning = not isRunning
+            
+            if isRunning then
+                task.spawn(function()
+                    while isRunning do
+                        task.wait()
+                        local character = player.Character
+                        if character and player.Durability and player.Durability.Value >= durabilityRequired then
+                            local leftHand = character:FindFirstChild("LeftHand")
+                            local rightHand = character:FindFirstChild("RightHand")
+                            
+                            if leftHand and rightHand then
+                                for _, v in pairs(workspace.machinesFolder:GetDescendants()) do
+                                    if v.Name == "neededDurability" and v.Value == durabilityRequired and v.Parent:FindFirstChild("Rock") then
+                                        local rock = v.Parent.Rock
+                                        firetouchinterest(rock, rightHand, 0)
+                                        firetouchinterest(rock, rightHand, 1)
+                                        firetouchinterest(rock, leftHand, 0)
+                                        firetouchinterest(rock, leftHand, 1)
+                                        getTool()
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end)
+                print("GLITCH: " .. rockName .. " glitch started!")
+            else
+                print("GLITCH: " .. rockName .. " glitch stopped!")
+            end
+        end)
+    end)
+    if not successButton then
+        warn("GLITCH: Failed to create button for " .. rockName .. ": " .. tostring(buttonErr))
+    end
+end
+
+local rockGlitches = {
+    {"Tiny Rock Fast Glitch", "Tiny Island Rock", 0},
+    {"Starter Rock Fast Glitch", "Starter Island Rock", 100},
+    {"Legend Beach Fast Glitch", "Legend Beach Rock", 5000},
+    {"Frost Rock Fast Glitch", "Frost Gym Rock", 150000},
+    {"Mythical Rock Fast Glitch", "Mythical Gym Rock", 400000},
+    {"Eternal Rock Fast Glitch", "Eternal Gym Rock", 750000},
+    {"Legends Rock Fast Glitch", "Legend Gym Rock", 1000000},
+    {"Muscle King Fast Glitch", "Muscle King Gym Rock", 5000000},
+    {"Ancient Jungle Fast Glitch", "Ancient Jungle Rock", 10000000}
+}
+
+for _, glitch in ipairs(rockGlitches) do
+    createRockGlitchButton(glitch[1], glitch[2], glitch[3])
+end
+
+--// Auto Kill Tab
+local autoKillTab
+local successAutoKill, autoKillErr = pcall(function()
+    autoKillTab = DrRayLibrary.newTab("Auto Kill", "ImageIdHere")
+end)
+if not successAutoKill then
+    warn("AUTOKILL: Failed to create Auto Kill tab: " .. tostring(autoKillErr))
+    return
+end
+
+local autoKillEnabled = false
+local originalPositions = {}
+local whitelistedPlayers = {}
+local whitelistDropdown = nil
+
+local function saveOriginalPositions()
+    print("POSITIONS: Saving...")
+    originalPositions = {}
+    for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+        if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            originalPositions[p] = p.Character.HumanoidRootPart.CFrame
+            print("POSITIONS: Saved for " .. p.Name)
+        end
+    end
+end
+
+local function restoreOriginalPositions()
+    print("POSITIONS: Restoring...")
+    for p, pos in pairs(originalPositions) do
+        if p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+            local restoreSuccess, restoreErr = pcall(function()
+                p.Character.HumanoidRootPart.CFrame = pos
+            end)
+            if restoreSuccess then
+                print("POSITIONS: Restored for " .. p.Name)
+            else
+                print("POSITIONS: Restore failed for " .. p.Name .. ": " .. tostring(restoreErr))
+            end
+        end
+    end
+    originalPositions = {}
+end
+
+local function autoKill()
+    print("AUTOKILL: Starting...")
+    saveOriginalPositions()
+    local character = player.Character
+    local leftHand = character and (character:FindFirstChild("LeftHand") or character:FindFirstChild("Left Arm"))
+    
+    if not leftHand then
+        warn("AUTOKILL: Left hand/arm not found")
+        autoKillEnabled = false
+        restoreOriginalPositions()
+        return
+    end
+    
+    local enemies = {}
+    local lastUpdate = tick()
+    
+    local success, err = pcall(function()
+        while autoKillEnabled do
+            if tick() - lastUpdate >= 2 then
+                print("AUTOKILL: Updating enemies...")
+                enemies = {}
+                for _, enemy in ipairs(game:GetService("Players"):GetPlayers()) do
+                    if enemy ~= player and enemy.Character and enemy.Character:FindFirstChild("HumanoidRootPart") then
+                        local humanoid = enemy.Character:FindFirstChild("Humanoid")
+                        if humanoid and humanoid.Health > 0 and not table.find(whitelistedPlayers, enemy.Name) then
+                            table.insert(enemies, enemy)
+                            print("AUTOKILL: Enemy added: " .. enemy.Name)
+                        end
+                    end
+                end
+                lastUpdate = tick()
+            end
+            
+            local attackSuccess, attackErr = pcall(function()
+                if player.muscleEvent then
+                    player.muscleEvent:FireServer("punch", "rightHand")
+                    player.muscleEvent:FireServer("punch", "leftHand")
+                else
+                    print("AUTOKILL: muscleEvent not found, trying rEvents...")
+                    local rEvents = game:GetService("ReplicatedStorage"):FindFirstChild("rEvents")
+                    local punchEvent = rEvents and rEvents:FindFirstChild("punchEvent")
+                    if punchEvent then
+                        punchEvent:FireServer("rightHand")
+                        punchEvent:FireServer("leftHand")
+                    else
+                        print("AUTOKILL: No punchEvent found")
+                    end
+                end
+            end)
+            if not attackSuccess then
+                print("AUTOKILL: Attack error: " .. tostring(attackErr))
+    
