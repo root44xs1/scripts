@@ -1,0 +1,171 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui.Name = "MuscleLegendsGUI"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 250, 0, 250)
+Frame.Position = UDim2.new(0.05, 0, 0.1, 0)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+
+local UICorner = Instance.new("UICorner", Frame)
+UICorner.CornerRadius = UDim.new(0, 8)
+
+local UIListLayout = Instance.new("UIListLayout", Frame)
+UIListLayout.Padding = UDim.new(0, 8)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 25)
+Title.BackgroundTransparency = 1
+Title.Text = "Muscle Legends Script FE"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 20
+
+local function createToggle(name, callback)
+	local container = Instance.new("Frame")
+	container.Size = UDim2.new(1, -10, 0, 25)
+	container.BackgroundTransparency = 1
+	container.Name = name
+
+	local label = Instance.new("TextLabel", container)
+	label.Text = name
+	label.TextColor3 = Color3.new(1, 1, 1)
+	label.Font = Enum.Font.SourceSans
+	label.TextSize = 18
+	label.Size = UDim2.new(0.7, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.TextXAlignment = Enum.TextXAlignment.Left
+
+	local toggle = Instance.new("TextButton", container)
+	toggle.Size = UDim2.new(0.3, 0, 1, 0)
+	toggle.Position = UDim2.new(0.7, 0, 0, 0)
+	toggle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	toggle.Text = "OFF"
+	toggle.TextColor3 = Color3.new(1, 0, 0)
+	toggle.Font = Enum.Font.SourceSansBold
+	toggle.TextSize = 16
+
+	local running = false
+	local loopThread = nil
+
+	toggle.MouseButton1Click:Connect(function()
+		running = not running
+		toggle.Text = running and "ON" or "OFF"
+		toggle.TextColor3 = running and Color3.new(0, 1, 0) or Color3.new(1, 0, 0)
+		if running then
+			loopThread = task.spawn(function()
+				callback(function() return running end)
+			end)
+		else
+			if loopThread then
+				task.cancel(loopThread)
+			end
+		end
+	end)
+
+	return container
+end
+
+local autoTrainToggle = createToggle("Auto Train", function(isRunning)
+	local backpack = player:WaitForChild("Backpack")
+	local character = player.Character or player.CharacterAdded:Wait()
+
+	while #backpack:GetChildren() < 2 and isRunning() do
+		task.wait()
+	end
+
+	local secondTool = backpack:GetChildren()[2]
+	if secondTool and secondTool:IsA("Tool") then
+		character:WaitForChild("Humanoid"):EquipTool(secondTool)
+	end
+
+	local muscleEvent = player:WaitForChild("muscleEvent")
+	while isRunning() do
+		muscleEvent:FireServer("rep")
+		task.wait(0.1)
+	end
+end)
+
+local autoBrawlToggle = createToggle("Auto Join Brawl", function(isRunning)
+	local brawlEvent = ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("brawlEvent")
+	while isRunning() do
+		brawlEvent:FireServer("joinBrawl")
+		task.wait(5)
+	end
+end)
+
+local strengthLabel = Instance.new("TextLabel", Frame)
+strengthLabel.Size = UDim2.new(1, -10, 0, 20)
+strengthLabel.BackgroundTransparency = 1
+strengthLabel.Text = "Set Strength FE"
+strengthLabel.TextColor3 = Color3.new(1, 1, 1)
+strengthLabel.Font = Enum.Font.SourceSansBold
+strengthLabel.TextSize = 16
+strengthLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local strengthBox = Instance.new("TextBox", Frame)
+strengthBox.Size = UDim2.new(1, -10, 0, 25)
+strengthBox.PlaceholderText = "Enter the strength number..."
+strengthBox.TextColor3 = Color3.new(1, 1, 1)
+strengthBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+strengthBox.Font = Enum.Font.SourceSans
+strengthBox.TextSize = 16
+strengthBox.ClearTextOnFocus = true
+Instance.new("UICorner", strengthBox).CornerRadius = UDim.new(0, 4)
+
+strengthBox.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		local input = tonumber(strengthBox.Text)
+		if input then
+			local rep = player:FindFirstChild("rep")
+			if rep and rep:FindFirstChild("strength") then
+				rep.strength.Value = input
+			end
+		end
+	end
+end)
+
+-- SET GEMS SECTION
+local gemsLabel = Instance.new("TextLabel", Frame)
+gemsLabel.Size = UDim2.new(1, -10, 0, 20)
+gemsLabel.BackgroundTransparency = 1
+gemsLabel.Text = "Set Gems FE"
+gemsLabel.TextColor3 = Color3.new(1, 1, 1)
+gemsLabel.Font = Enum.Font.SourceSansBold
+gemsLabel.TextSize = 16
+gemsLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local gemsBox = Instance.new("TextBox", Frame)
+gemsBox.Size = UDim2.new(1, -10, 0, 25)
+gemsBox.PlaceholderText = "Enter gems amount..."
+gemsBox.TextColor3 = Color3.new(1, 1, 1)
+gemsBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+gemsBox.Font = Enum.Font.SourceSans
+gemsBox.TextSize = 16
+gemsBox.ClearTextOnFocus = true
+Instance.new("UICorner", gemsBox).CornerRadius = UDim.new(0, 4)
+
+gemsBox.FocusLost:Connect(function(enterPressed)
+	if enterPressed then
+		local input = tonumber(gemsBox.Text)
+		if input then
+			local set = player:FindFirstChild("Set")
+			if set and set:FindFirstChild("Gems") then
+				set.Gems.Value = input
+			end
+		end
+	end
+end)
+
+-- Parent to frame
+autoTrainToggle.Parent = Frame
+autoBrawlToggle.Parent = Frame
+gemsLabel.Parent = Frame
+gemsBox.Parent = Frame
