@@ -1,0 +1,114 @@
+-- Muscle Legends Script by ChatGPT
+
+-- UI Library
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Frame = Instance.new("Frame", ScreenGui)
+local ToggleButton = Instance.new("TextButton", ScreenGui)
+local dragging, dragInput, dragStart, startPos
+
+-- UI Setup
+ScreenGui.Name = "MuscleLegendsUI"
+Frame.Size = UDim2.new(0, 300, 0, 400)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -200)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.Active = true
+Frame.Draggable = true
+
+ToggleButton.Size = UDim2.new(0, 100, 0, 30)
+ToggleButton.Position = UDim2.new(0, 10, 0, 10)
+ToggleButton.Text = "Toggle UI"
+ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
+-- Toggle Frame
+local uiVisible = true
+ToggleButton.MouseButton1Click:Connect(function()
+	uiVisible = not uiVisible
+	Frame.Visible = uiVisible
+end)
+
+-- Anti-AFK
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+	vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	wait(1)
+	vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+-- Button Factory
+function createButton(text, parent, callback)
+	local btn = Instance.new("TextButton", parent)
+	btn.Size = UDim2.new(1, -20, 0, 30)
+	btn.Position = UDim2.new(0, 10, 0, #parent:GetChildren() * 35)
+	btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	btn.Text = text
+	btn.MouseButton1Click:Connect(callback)
+end
+
+-- Functions
+local function autoTrain(stat)
+	while _G[stat] do
+		local args = {[1] = stat}
+		game:GetService("ReplicatedStorage").rEvents[stat .. "Stat"]:FireServer(unpack(args))
+		wait(0.1)
+	end
+end
+
+local function autoCollect()
+	while _G.collect do
+		for _,v in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if v.Name == "Crystal" or v.Name == "Gem" or v.Name == "Coin" then
+				pcall(function()
+					v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+				end)
+			end
+		end
+		wait(1)
+	end
+end
+
+local function ESPPlayers()
+	for _, player in pairs(game.Players:GetPlayers()) do
+		if player ~= game.Players.LocalPlayer and not player.Character:FindFirstChild("ESP") then
+			local highlight = Instance.new("Highlight", player.Character)
+			highlight.Name = "ESP"
+			highlight.FillColor = Color3.fromRGB(255, 0, 0)
+			highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+		end
+	end
+end
+
+-- Buttons
+createButton("Автокач силы", Frame, function()
+	_G.Strength = not _G.Strength
+	if _G.Strength then autoTrain("Strength") end
+end)
+
+createButton("Автокач выносливости", Frame, function()
+	_G.Endurance = not _G.Endurance
+	if _G.Endurance then autoTrain("Endurance") end
+end)
+
+createButton("Автокач скорости", Frame, function()
+	_G.Speed = not _G.Speed
+	if _G.Speed then autoTrain("Speed") end
+end)
+
+createButton("Автосбор монет/кристаллов", Frame, function()
+	_G.collect = not _G.collect
+	if _G.collect then autoCollect() end
+end)
+
+createButton("ESP игроков", Frame, function()
+	ESPPlayers()
+end)
+
+createButton("Телепорт в качалку", Frame, function()
+	game.Players.LocalPlayer.Character:MoveTo(Vector3.new(250, 5, 300)) -- Пример
+end)
+
+createButton("Телепорт на арену", Frame, function()
+	game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-50, 5, 900)) -- Пример
+end)
+
+-- Готово
+print("Скрипт Muscle Legends загружен.")
