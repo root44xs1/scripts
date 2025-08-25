@@ -1,0 +1,190 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
+local HttpService = game:GetService("HttpService")
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/AOD-RuRu/AoD/refs/heads/main/uiUI", true))()
+
+local window = library:AddWindow("Muscle Legends V3 | Reaper Scripts", {
+    main_color = Color3.fromRGB(0, 0, 0 ),
+    min_size = Vector2.new(590, 570),
+    can_resize = false,
+})
+
+local Main = window:AddTab("Main")
+
+Main:AddLabel("Settings").TextSize = 25
+
+
+
+-- WalkSpeed Textbox & Toggle
+local walkSpeedValue = 16 -- Default speed
+Main:AddTextBox("WalkSpeed", function(text)
+    local speed = tonumber(text)
+    if speed and speed >= 1 and speed <= 500 then
+        walkSpeedValue = speed
+    end
+end)
+
+local setSpeed = false
+Main:AddSwitch("Set Speed", function(state)
+    setSpeed = state
+    while setSpeed do
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = walkSpeedValue
+        task.wait(0.1)
+    end
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16 -- Reset to default
+end)
+
+-- JumpPower Textbox & Toggle
+local jumpPowerValue = 50 -- Default JumpPower
+Main:AddTextBox("JumpPower", function(text)
+    local jump = tonumber(text)
+    if jump then
+        jumpPowerValue = jump
+    end
+end)
+
+local applyJumpPower = false
+Main:AddSwitch("Apply JumpPower", function(state)
+    applyJumpPower = state
+    game.Players.LocalPlayer.Character.Humanoid.UseJumpPower = true
+
+    if applyJumpPower then
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = jumpPowerValue
+    else
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50 -- Reset
+    end
+end)
+
+-- Avatar Size Textbox & Toggle
+local sizeValue = 1 -- Default size (normal)
+Main:AddTextBox("Size", function(text)
+    local size = tonumber(text)
+    if size and size >= 1 and size <= 100 then
+        sizeValue = size
+    end
+end)
+
+local setSize = false
+Main:AddSwitch("Set", function(state)
+    setSize = state
+    local char = game.Players.LocalPlayer.Character
+    if char then
+        local humanoid = char:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            if state then
+                humanoid.BodyDepthScale.Value = sizeValue
+                humanoid.BodyHeightScale.Value = sizeValue
+                humanoid.BodyWidthScale.Value = sizeValue
+                humanoid.HeadScale.Value = sizeValue
+            else
+                humanoid.BodyDepthScale.Value = 1
+                humanoid.BodyHeightScale.Value = 1
+                humanoid.BodyWidthScale.Value = 1
+                humanoid.HeadScale.Value = 1
+            end
+        end
+    end
+end)
+
+Main:AddLabel("Misc").TextSize = 25
+
+Main:AddTextBox("Camera Zoom", function(text)
+    local Camera Zoom = tonumber(text)
+    if Camera then
+        CameraZoomValue = Camera
+    end
+end)
+
+Main:AddSwitch("Hide Pets", function(State)
+    if State then
+        game:GetService("ReplicatedStorage").rEvents.showPetsEvent:FireServer("hidePets")
+    else
+        game:GetService("ReplicatedStorage").rEvents.showPetsEvent:FireServer("showPets")
+    end
+end)
+
+Main:AddSwitch("Disable Trade",function(State)
+
+end)
+
+local parts = {}
+local partSize = 2048
+local totalDistance = 50000
+local startPosition = Vector3.new(-2, -9.5, -2)
+local numberOfParts = math.ceil(totalDistance / partSize)
+
+local function createParts()
+    for x = 0, numberOfParts - 1 do
+        for z = 0, numberOfParts - 1 do
+            local newPartSide = Instance.new("Part")
+            newPartSide.Size = Vector3.new(partSize, 1, partSize)
+            newPartSide.Position = startPosition + Vector3.new(x * partSize, 0, z * partSize)
+            newPartSide.Anchored = true
+            newPartSide.Transparency = 1
+            newPartSide.CanCollide = true
+            newPartSide.Name = "Part_Side_" .. x .. "_" .. z
+            newPartSide.Parent = workspace
+            table.insert(parts, newPartSide)
+            
+            local newPartLeftRight = Instance.new("Part")
+            newPartLeftRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartLeftRight.Position = startPosition + Vector3.new(-x * partSize, 0, z * partSize)
+            newPartLeftRight.Anchored = true
+            newPartLeftRight.Transparency = 1
+            newPartLeftRight.CanCollide = true
+            newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
+            newPartLeftRight.Parent = workspace
+            table.insert(parts, newPartLeftRight)
+            
+            local newPartUpLeft = Instance.new("Part")
+            newPartUpLeft.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpLeft.Position = startPosition + Vector3.new(-x * partSize, 0, -z * partSize)
+            newPartUpLeft.Anchored = true
+            newPartUpLeft.Transparency = 1
+            newPartUpLeft.CanCollide = true
+            newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
+            newPartUpLeft.Parent = workspace
+            table.insert(parts, newPartUpLeft)
+            
+            local newPartUpRight = Instance.new("Part")
+            newPartUpRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpRight.Position = startPosition + Vector3.new(x * partSize, 0, -z * partSize)
+            newPartUpRight.Anchored = true
+            newPartUpRight.Transparency = 1
+            newPartUpRight.CanCollide = true
+            newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
+            newPartUpRight.Parent = workspace
+            table.insert(parts, newPartUpRight)
+        end
+    end
+end
+
+local function makePartsWalkthrough()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = false
+        end
+    end
+end
+
+local function makePartsSolid()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+end
+
+Main:AddSwitch("Walk On Water",function(bool)
+    if bool then
+        createParts()
+    else
+        makePartsWalkthrough()
+    end
+
+end)
