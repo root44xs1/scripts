@@ -1,0 +1,920 @@
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1882827/865357UI/refs/heads/main/U585467I", true))()
+
+local window = library:AddWindow("EpicDeevv V2 | Made By Dan", {
+    main_color = Color3.fromRGB(0, 0, 0),
+    min_size = Vector2.new(650, 650),
+    can_resize = true,
+})
+
+local Main = window:AddTab("Main")
+
+local Folder = Main:AddFolder("Local Player")
+
+local autoEatEnabled = false
+
+local function eatProteinEgg()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatEnabled then
+            eatProteinEgg()
+            task.wait(1800)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+
+Folder:AddSwitch("Auto Eat Egg",function(state)
+    autoEatEnabled = state
+end)
+
+Folder:AddLabel("|-----Time-----|").TextSize = 25
+
+local timeDropdown = Folder:AddDropdown("Change Time", function(selection)
+    local lighting = game:GetService("Lighting")
+    
+    if selection == "Night" then
+        lighting.ClockTime = 0
+    elseif selection == "Day" then
+        lighting.ClockTime = 12
+    elseif selection == "Midnight" then
+        lighting.ClockTime = 6
+    end
+    
+end)
+
+timeDropdown:Add("Night")
+timeDropdown:Add("Day")
+timeDropdown:Add("Midnight")
+
+
+
+
+
+
+Folder:AddLabel("|-----Auto Farm-----|").TextSize = 25
+
+local repToggle = false
+
+Folder:AddSwitch("Auto Farm (Equip Any tool)", function(state)
+    repToggle = state
+    while repToggle do
+        local args = { "rep" }
+        game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent"):FireServer(unpack(args))
+        task.wait(0.2)
+    end
+end)
+
+local folder1 = Main:AddFolder("Tools")
+
+local weightOn = false
+folder1:AddSwitch("Weight", function(bool)
+    weightOn = bool
+    task.spawn(function()
+        while weightOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local pushupsOn = false
+folder1:AddSwitch("Pushups", function(bool)
+    pushupsOn = bool
+    task.spawn(function()
+        while pushupsOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Pushups")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local handstandOn = false
+folder1:AddSwitch("Handstand", function(bool)
+    handstandOn = bool
+    task.spawn(function()
+        while handstandOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Handstand")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local situpsOn = false
+folder1:AddSwitch("Situps", function(bool)
+    situpsOn = bool
+    task.spawn(function()
+        while situpsOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Situps")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local function equipTool(toolName, character, backpack)
+    local existingTool = character:FindFirstChildOfClass("Tool")
+    if existingTool then
+        existingTool.Parent = backpack
+    end
+
+    local tool = backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
+    if tool and tool.Parent ~= character then
+        tool.Parent = character
+    end
+end
+
+local function handleRock(rock, leftHand)
+    if rock then
+        rock.Size = Vector3.new(2, 1, 1)
+        rock.Transparency = 1
+        rock.CanCollide = false
+
+        if rock:FindFirstChild("rockGui") then
+            for _, v in pairs(rock.rockGui:GetChildren()) do
+                v.Visible = false
+            end
+        end
+
+        for _, particle in ipairs({"rockEmitter", "hoopParticle", "lavaParticle"}) do
+            if rock:FindFirstChild(particle) then
+                rock[particle]:Destroy()
+            end
+        end
+
+        rock.CFrame = leftHand.CFrame
+
+        local touchPart = rock:FindFirstChild("TouchPart")
+        if touchPart then
+            touchPart.CFrame = leftHand.CFrame
+            local fireTouch = Instance.new("RemoteEvent")
+            fireTouch.Parent = rock
+            fireTouch:FireServer(touchPart)
+        end
+    end
+end
+
+local function autoRockFarm(rockName, toggleVar)
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+    local leftHand = character:WaitForChild("LeftHand")
+    local rock = game.Workspace.machinesFolder:FindFirstChild(rockName)
+    rock = rock and rock:FindFirstChild("Rock")
+
+    _G[toggleVar] = true
+
+    while _G[toggleVar] do
+        for _, toolName in ipairs({"Punch", "Pushups"}) do
+            equipTool(toolName, character, backpack)
+            task.wait(0.05)
+        end
+
+        handleRock(rock, leftHand)
+        player:WaitForChild("muscleEvent"):FireServer("rep")
+        task.wait(0.1)
+    end
+end
+
+local AutoFarm = window:AddTab("Farm")
+
+AutoFarm:AddLabel("Complements to Farm")
+
+local autoEatEnabled = false
+
+local function eatProteinEgg()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatEnabled then
+            eatProteinEgg()
+            task.wait(1800)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+AutoFarm:AddSwitch("Auto Eat Egg", function(state)
+    autoEatEnabled = state
+end)
+
+local repToggle = false
+
+AutoFarm:AddSwitch("Auto Farm (Equip Any tool)", function(state)
+    repToggle = state
+    while repToggle do
+        local args = { "rep" }
+        game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent"):FireServer(unpack(args))
+        task.wait(0.2)
+    end
+end)
+
+local folder1 = AutoFarm:AddFolder("Tools")
+
+local weightOn = false
+folder1:AddSwitch("Weight", function(bool)
+    weightOn = bool
+    task.spawn(function()
+        while weightOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local pushupsOn = false
+folder1:AddSwitch("Pushups", function(bool)
+    pushupsOn = bool
+    task.spawn(function()
+        while pushupsOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Pushups")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local handstandOn = false
+folder1:AddSwitch("Handstand", function(bool)
+    handstandOn = bool
+    task.spawn(function()
+        while handstandOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Handstand")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local situpsOn = false
+folder1:AddSwitch("Situps", function(bool)
+    situpsOn = bool
+    task.spawn(function()
+        while situpsOn do
+            local tool = game.Players.LocalPlayer.Backpack:FindFirstChild("Situps")
+            if tool then
+                tool.Parent = game.Players.LocalPlayer.Character
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+local function equipTool(toolName, character, backpack)
+    local existingTool = character:FindFirstChildOfClass("Tool")
+    if existingTool then
+        existingTool.Parent = backpack
+    end
+
+    local tool = backpack:FindFirstChild(toolName) or character:FindFirstChild(toolName)
+    if tool and tool.Parent ~= character then
+        tool.Parent = character
+    end
+end
+
+local function handleRock(rock, leftHand)
+    if rock then
+        rock.Size = Vector3.new(2, 1, 1)
+        rock.Transparency = 1
+        rock.CanCollide = false
+
+        if rock:FindFirstChild("rockGui") then
+            for _, v in pairs(rock.rockGui:GetChildren()) do
+                v.Visible = false
+            end
+        end
+
+        for _, particle in ipairs({"rockEmitter", "hoopParticle", "lavaParticle"}) do
+            if rock:FindFirstChild(particle) then
+                rock[particle]:Destroy()
+            end
+        end
+
+        rock.CFrame = leftHand.CFrame
+
+        local touchPart = rock:FindFirstChild("TouchPart")
+        if touchPart then
+            touchPart.CFrame = leftHand.CFrame
+            local fireTouch = Instance.new("RemoteEvent")
+            fireTouch.Parent = rock
+            fireTouch:FireServer(touchPart)
+        end
+    end
+end
+
+local function autoRockFarm(rockName, toggleVar)
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+    local leftHand = character:WaitForChild("LeftHand")
+    local rock = game.Workspace.machinesFolder:FindFirstChild(rockName)
+    rock = rock and rock:FindFirstChild("Rock")
+
+    _G[toggleVar] = true
+
+    while _G[toggleVar] do
+        for _, toolName in ipairs({"Punch", "Pushups"}) do
+            equipTool(toolName, character, backpack)
+            task.wait(0.05)
+        end
+
+        handleRock(rock, leftHand)
+        player:WaitForChild("muscleEvent"):FireServer("rep")
+        task.wait(0.1)
+    end
+end
+
+local Rock = window:AddTab("Rock")
+
+function gettool()
+    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        if v.Name == "Punch" and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end
+    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+end
+
+Rock:AddSwitch("Tiny Rock", function(Value)
+    selectrock = "Tiny Island Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 0 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 0 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Starter Rock", function(Value)
+    selectrock = "Starter Island Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 100 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 100 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Legend Beach Rock", function(Value)
+    selectrock = "Legend Beach Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 5000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 5000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Frozen Rock", function(Value)
+    selectrock = "Frost Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 150000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 150000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Mythical Rock", function(Value)
+    selectrock = "Mythical Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 400000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 400000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Eternal Rock", function(Value)
+    selectrock = "Eternal Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 750000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 750000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Legend Rock", function(Value)
+    selectrock = "Legend Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 1000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 1000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Muscle King Rock", function(Value)
+    selectrock = "Muscle King Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 5000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 5000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+Rock:AddSwitch("Jungle Rock", function(Value)
+    selectrock = "Ancient Jungle Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 10000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 10000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+local rebirths = window:AddTab("Rebirths")
+
+rebirths:AddTextBox("Rebirth Target", function(text)
+    local newValue = tonumber(text)
+    if newValue and newValue > 0 then
+        targetRebirthValue = newValue
+        updateStats() -- Call the stats update function
+        
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Objetivo Actualizado",
+            Text = "Nuevo objetivo: " .. tostring(targetRebirthValue) .. " renacimientos",
+            Duration = 0
+        })
+    else
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Size",
+            Text = "Put a size larger than 0",
+            Duration = 0
+        })
+    end
+end)
+
+local infiniteSwitch
+
+local targetSwitch = rebirths:AddSwitch("Auto Rebirth Target", function(bool)
+    _G.targetRebirthActive = bool
+    
+    if bool then
+        if _G.infiniteRebirthActive and infiniteSwitch then
+            infiniteSwitch:Set(false)
+            _G.infiniteRebirthActive = false
+        end
+        
+        spawn(function()
+            while _G.targetRebirthActive and wait(0.1) do
+                local currentRebirths = game.Players.LocalPlayer.leaderstats.Rebirths.Value
+                
+                if currentRebirths >= targetRebirthValue then
+                    targetSwitch:Set(false)
+                    _G.targetRebirthActive = false
+                    
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡Objetivo Alcanzado!",
+                        Text = "Has alcanzado " .. tostring(targetRebirthValue) .. " renacimientos",
+                        Duration = 5
+                    })
+                    
+                    break
+                end
+                
+                game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+            end
+        end)
+    end
+end, "automatic rebirth until reaching the goal")
+
+infiniteSwitch = rebirths:AddSwitch("Auto Rebirth (Infinitely)", function(bool)
+    _G.infiniteRebirthActive = bool
+    
+    if bool then
+        if _G.targetRebirthActive and targetSwitch then
+            targetSwitch:Set(false)
+            _G.targetRebirthActive = false
+        end
+        
+        spawn(function()
+            while _G.infiniteRebirthActive and wait(0.1) do
+                game:GetService("ReplicatedStorage").rEvents.rebirthRemote:InvokeServer("rebirthRequest")
+            end
+        end)
+    end
+end, "rebirth infinitely")
+
+local sizeSwitch = rebirths:AddSwitch("Auto Size 1", function(bool)
+    _G.autoSizeActive = bool
+    
+    if bool then
+        spawn(function()
+            while _G.autoSizeActive and wait() do
+                game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", 1)
+            end
+        end)
+    end
+end, "Size 1")
+
+local teleportSwitch = rebirths:AddSwitch("Auto Teleport to Muscle King", function(bool)
+    _G.teleportActive = bool
+    
+    if bool then
+        spawn(function()
+            while _G.teleportActive and wait() do
+                if game.Players.LocalPlayer.Character then
+                    game.Players.LocalPlayer.Character:MoveTo(Vector3.new(-8646, 17, -5738))
+                end
+            end
+        end)
+    end
+end, "Tp to Mk")
+
+local autoEquipToolsFolder = rebirths:AddFolder("Auto Equip Tools")
+
+autoEquipToolsFolder:AddButton("Gamepass AutoLift", function()
+    local gamepassFolder = game:GetService("ReplicatedStorage").gamepassIds
+    local player = game:GetService("Players").LocalPlayer
+    for _, gamepass in pairs(gamepassFolder:GetChildren()) do
+        local value = Instance.new("IntValue")
+        value.Name = gamepass.Name
+        value.Value = gamepass.Value
+        value.Parent = player.ownedGamepasses
+    end
+end, "Unlock AutoLift Passe")
+
+autoEquipToolsFolder:AddSwitch("Auto Weight", function(Value)
+    _G.AutoWeight = Value
+    
+    if Value then
+        local weightTool = game.Players.LocalPlayer.Backpack:FindFirstChild("Weight")
+        if weightTool then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(weightTool)
+        end
+    else
+        local character = game.Players.LocalPlayer.Character
+        local equipped = character:FindFirstChild("Weight")
+        if equipped then
+            equipped.Parent = game.Players.LocalPlayer.Backpack
+        end
+    end
+    
+    task.spawn(function()
+        while _G.AutoWeight do
+            if not _G.AutoWeight then break end
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+            task.wait(0.1)
+        end
+    end)
+end, "Auto Weight")
+
+autoEquipToolsFolder:AddSwitch("Auto Pushups", function(Value)
+    _G.AutoPushups = Value
+    
+    if Value then
+        local pushupsTool = game.Players.LocalPlayer.Backpack:FindFirstChild("Pushups")
+        if pushupsTool then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(pushupsTool)
+        end
+    else
+        local character = game.Players.LocalPlayer.Character
+        local equipped = character:FindFirstChild("Pushups")
+        if equipped then
+            equipped.Parent = game.Players.LocalPlayer.Backpack
+        end
+    end
+    
+    task.spawn(function()
+        while _G.AutoPushups do
+            if not _G.AutoPushups then break end
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+            task.wait(0.1)
+        end
+    end)
+end, "Auto Pushups")
+
+autoEquipToolsFolder:AddSwitch("Auto Handstands", function(Value)
+    _G.AutoHandstands = Value
+    
+    if Value then
+        local handstandsTool = game.Players.LocalPlayer.Backpack:FindFirstChild("Handstands")
+        if handstandsTool then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(handstandsTool)
+        end
+    else
+        local character = game.Players.LocalPlayer.Character
+        local equipped = character:FindFirstChild("Handstands")
+        if equipped then
+            equipped.Parent = game.Players.LocalPlayer.Backpack
+        end
+    end
+    
+    task.spawn(function()
+        while _G.AutoHandstands do
+            if not _G.AutoHandstands then break end
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+            task.wait(0.1)
+        end
+    end)
+end, "Auto Handstands")
+
+autoEquipToolsFolder:AddSwitch("Auto Situps", function(Value)
+    _G.AutoSitups = Value
+    
+    if Value then
+        local situpsTool = game.Players.LocalPlayer.Backpack:FindFirstChild("Situps")
+        if situpsTool then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(situpsTool)
+        end
+    else
+        local character = game.Players.LocalPlayer.Character
+        local equipped = character:FindFirstChild("Situps")
+        if equipped then
+            equipped.Parent = game.Players.LocalPlayer.Backpack
+        end
+    end
+    
+    task.spawn(function()
+        while _G.AutoSitups do
+            if not _G.AutoSitups then break end
+            game:GetService("Players").LocalPlayer.muscleEvent:FireServer("rep")
+            task.wait(0.1)
+        end
+    end)
+end, "Auto Abdominals")
+
+autoEquipToolsFolder:AddSwitch("Auto Punch", function(Value)
+    _G.fastHitActive = Value
+    
+    if Value then
+        task.spawn(function()
+            while _G.fastHitActive do
+                if not _G.fastHitActive then break end
+                
+                local player = game.Players.LocalPlayer
+                local punch = player.Backpack:FindFirstChild("Punch")
+                if punch then
+                    punch.Parent = player.Character
+                    if punch:FindFirstChild("attackTime") then
+                        punch.attackTime.Value = 0
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
+        
+        task.spawn(function()
+            while _G.fastHitActive do
+                if not _G.fastHitActive then break end
+                
+                local player = game.Players.LocalPlayer
+                player.muscleEvent:FireServer("punch", "rightHand")
+                player.muscleEvent:FireServer("punch", "leftHand")
+                
+                local character = player.Character
+                if character then
+                    local punchTool = character:FindFirstChild("Punch")
+                    if punchTool then
+                        punchTool:Activate()
+                    end
+                end
+                task.wait(0)
+            end
+        end)
+    else
+        local character = game.Players.LocalPlayer.Character
+        local equipped = character:FindFirstChild("Punch")
+        if equipped then
+            equipped.Parent = game.Players.LocalPlayer.Backpack
+        end
+    end
+end, "Auto Punch")
+
+autoEquipToolsFolder:AddSwitch("Fast Tools", function(Value)
+    _G.FastTools = Value
+    
+    local defaultSpeeds = {
+        {
+            "Punch",
+            "attackTime",
+            Value and 0 or 0.35
+        },
+        {
+            "Ground Slam",
+            "attackTime",
+            Value and 0 or 6
+        },
+        {
+            "Stomp",
+            "attackTime",
+            Value and 0 or 7
+        },
+        {
+            "Handstands",
+            "repTime",
+            Value and 0 or 1
+        },
+        {
+            "Pushups",
+            "repTime",
+            Value and 0 or 1
+        },
+        {
+            "Weight",
+            "repTime",
+            Value and 0 or 1
+        },
+        {
+            "Situps",
+            "repTime",
+            Value and 0 or 1
+        }
+    }
+    
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    
+    for _, toolInfo in ipairs(defaultSpeeds) do
+        local tool = backpack:FindFirstChild(toolInfo[1])
+        if tool and tool:FindFirstChild(toolInfo[2]) then
+            tool[toolInfo[2]].Value = toolInfo[3]
+        end
+        
+        local equippedTool = player.Character and player.Character:FindFirstChild(toolInfo[1])
+        if equippedTool and equippedTool:FindFirstChild(toolInfo[2]) then
+            equippedTool[toolInfo[2]].Value = toolInfo[3]
+        end
+    end
+end, "Speed up all tools")
+
+
+
+
+
+local Show Dura = window:AddTab("ShowDura")
