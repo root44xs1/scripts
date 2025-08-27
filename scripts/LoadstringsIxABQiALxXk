@@ -1,0 +1,281 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
+
+getgenv().AutoKillTargets = getgenv().AutoKillTargets or {}
+getgenv().AutoKillEnabled = true
+getgenv().DebugMode = false
+getgenv().SERVER_HOP_INTERVAL = 100
+
+local placeId = game.PlaceId
+local hopping = false
+local lastAction = tick()
+local serverJoinTime = tick()
+local connection
+local rightHand, rightArm
+local teleportAttempts = 0
+local MAX_TELEPORT_ATTEMPTS = 5
+
+local excludedNames = {
+    ["Nii_OZ"] = false,
+    ["VTBR_VoaPassarinho8"] = false,
+}
+
+local function findPopulatedServer()
+    local cursor = nil
+    local attempts = 0
+    
+    while attempts < 3 do
+        attempts += 1
+        local url = "https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Desc&limit=100"
+        if cursor then url = url.."&cursor="..cursor end
+        
+        local success, response = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet(url))
+        end)
+        
+        if success and response and response.data then
+            local goodServers = {}
+            local decentServers = {}
+            
+            for _, server in ipairs(response.data) do
+                if server.id ~= game.JobId then
+                    if server.playing >= 15 and server.maxPlayers == 20 then
+                        table.insert(goodServers, server)
+                    elseif server.playing >= 10 and server.maxPlayers == 20 then
+                        table.insert(decentServers, server)
+                    end
+                end
+            end
+            
+            if #goodServers > 0 then
+                return goodServers[math.random(1, #goodServers)].id
+            elseif #decentServers > 0 then
+                return decentServers[math.random(1, #decentServers)].id
+            end
+            
+            cursor = response.nextPageCursor
+            if not cursor then break end
+        else
+            task.wait(1)
+        end
+    end
+    return nil
+end
+
+local function hopToServer()
+    if hopping then 
+        if DebugMode then print("Already hopping, skipping...") end
+        return 
+    end
+    
+    hopping = true
+    teleportAttempts = 0
+    
+    while teleportAttempts < MAX_TELEPORT_ATTEMPTS do
+        teleportAttempts += 1
+        
+        if DebugMode then
+            print("Teleport attempt " .. teleportAttempts .. "/" .. MAX_TELEPORT_ATTEMPTS)
+        end
+        
+        local serverId = findPopulatedServer()
+        if serverId then
+            local success, errorMsg = pcall(function()
+                if DebugMode then
+                    print("Attempting teleport to server: " .. serverId)
+                end
+                TeleportService:TeleportToPlaceInstance(placeId, serverId, LocalPlayer)
+            end)
+            
+            if success then
+                if DebugMode then print("Teleport initiated successfully") end
+                task.wait(3)
+                break
+            else
+                if DebugMode then
+                    print("Teleport failed: " .. tostring(errorMsg))
+                end
+                task.wait(2)
+            end
+        else
+            if DebugMode then print("No suitable server found") end
+            task.wait(3)
+        end
+    end
+    
+    if teleportAttempts >= MAX_TELEPORT_ATTEMPTS then
+        if DebugMode then print("All teleport attempts failed, trying fallback...") end
+        pcall(function()
+            TeleportService:Teleport(placeId, LocalPlayer)
+        end)
+    end
+    
+    hopping = false
+end
+
+local function safeHopToServer()
+    if not hopping then
+        pcall(hopToServer)
+    end
+end
+
+local function attackSelectedPlayers()
+    if not AutoKillEnabled or hopping then return end
+    local character = LocalPlayer.Character
+    if not character then return end
+    if not rightHand then
+        rightHand = character:FindFirstChild("RightHand") or character:FindFirstChild("Right Arm")
+    end
+    local hand = rightHand
+    if not hand then return end
+    for _, target in ipairs(Players:GetPlayers()) do
+        if target ~= LocalPlayer and not excludedNames[target.Name] and target.Character then
+            local targetHumanoid = target.Character:FindFirstChildOfClass("Humanoid")
+            local root = target.Character:FindFirstChild("HumanoidRootPart")
+            if targetHumanoid and targetHumanoid.Health > 0 and root then
+                pcall(function()
+                    firetouchinterest(hand, root, 0)
+                    task.wait(0.02)
+                    firetouchinterest(hand, root, 1)
+                    lastAction = tick()
+                end)
+            end
+        end
+    end
+end
+
+local function autoEquip()
+    while task.wait(0.1) and AutoKillEnabled do
+        if hopping then continue end
+        pcall(function()
+            local char = LocalPlayer.Character
+            if not char then return end
+            local backpack = LocalPlayer.Backpack
+            if not backpack then return end
+            for _, itemName in ipairs({"Protein Egg", "Punch"}) do
+                local item = backpack:FindFirstChild(itemName) or char:FindFirstChild(itemName)
+                if item and item.Parent ~= char then
+                    item.Parent = char
+                end
+                if itemName == "Punch" and item and item:IsA("Tool") then
+                    item:Activate()
+                    lastAction = tick()
+                end
+            end
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        task.wait(1)
+        if not AutoKillEnabled then continue end
+        
+        local currentTime = tick()
+        if currentTime - serverJoinTime >= SERVER_HOP_INTERVAL and not hopping then
+            if DebugMode then
+                print("Time to hop servers! Interval reached.")
+            end
+            safeHopToServer()
+        end
+    end
+end)
+
+task.spawn(function()
+    while task.wait(0.08) do
+        if AutoKillEnabled and not hopping then
+            pcall(attackSelectedPlayers)
+        end
+    end
+end)
+
+task.spawn(autoEquip)
+
+task.spawn(function()
+    while task.wait(3) do
+        if not AutoKillEnabled then continue end
+        if tick() - lastAction > 30 and not hopping then
+            if DebugMode then
+                print("No action for 30 seconds, hopping servers...")
+            end
+            safeHopToServer()
+        end
+    end
+end)
+
+local function setupDiedListener(character)
+    local hum = character:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum.Died:Connect(function()
+            task.wait(2)
+            safeHopToServer()
+        end)
+    else
+        character.ChildAdded:Connect(function(child)
+            if child:IsA("Humanoid") then
+                child.Died:Connect(function()
+                    task.wait(2)
+                    safeHopToServer()
+                end)
+            end
+        end)
+    end
+end
+
+if LocalPlayer.Character then
+    setupDiedListener(LocalPlayer.Character)
+end
+
+LocalPlayer.CharacterAdded:Connect(function(character)
+    rightHand = nil
+    rightArm = nil
+    lastAction = tick()
+    serverJoinTime = tick()
+    setupDiedListener(character)
+end)
+
+if connection then connection:Disconnect() end
+connection = LocalPlayer.OnTeleport:Connect(function(status)
+    if status == Enum.TeleportState.Started then
+        if DebugMode then print("Teleport started") end
+        serverJoinTime = tick()
+        lastAction = tick()
+        hopping = true
+        
+    elseif status == Enum.TeleportState.Failed then
+        if DebugMode then print("Teleport failed, retrying...") end
+        hopping = false
+        task.wait(2)
+        safeHopToServer()
+        
+    elseif status == Enum.TeleportState.Completed then
+        if DebugMode then print("Teleport completed successfully") end
+        serverJoinTime = tick()
+        lastAction = tick()
+        hopping = false
+        teleportAttempts = 0
+    end
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(10)
+        if hopping and tick() - lastAction > 15 then
+            if DebugMode then print("Stuck in hopping state, forcing reset...") end
+            hopping = false
+            task.wait(2)
+            safeHopToServer()
+        end
+    end
+end)
+
+serverJoinTime = tick()
+lastAction = tick()
+
+if DebugMode then
+    print("Script initialized successfully")
+    print("Server hop interval: " .. SERVER_HOP_INTERVAL .. " seconds")
+end
