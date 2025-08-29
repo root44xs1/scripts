@@ -1,0 +1,1298 @@
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+
+WindUI:Localization({
+    Enabled = true,
+    Prefix = "loc:",
+    DefaultLanguage = "en",
+    Translations = {
+        ["en"] = {
+            ["WINDUI_TITLE"] = "Sad v1.1 | Private | CRACKED BY ZOLO",
+            ["AUTOMATION"] = "Automation",
+            ["SETTINGS"] = "Settings",
+            ["MISC"] = "Misc",
+            ["USEFUL"] = "Useful",
+            ["PROTECTION"] = "Protection"
+        }
+    }
+})
+
+WindUI.TransparencyValue = 0.2
+WindUI:SetTheme("Dark")
+
+local Window = WindUI:CreateWindow({
+    Title = "loc:WINDUI_TITLE",
+    Icon = "",
+    Author = "Private Script",
+    Folder = "Sad_Private",
+    Size = UDim2.fromOffset(685, 800),
+    Theme = "Dark",
+    User = {
+        Enabled = true,
+        Anonymous = true,
+        Callback = function()
+            WindUI:Notify({
+                Title = "User Profile",
+                Content = "User: " .. LocalPlayer.Name,
+                Duration = 3
+            })
+        end
+    },
+    SideBarWidth = 200,
+})
+
+Window:Tag({
+    Title = "v1.1",
+    Color = Color3.fromHex("#cf0d0d")
+})
+
+Window:Tag({
+    Title = "Private",
+    Color = Color3.fromHex("#30ff6a")
+})
+
+local Tabs = {
+    Automation = Window:Section({ Title = "loc:AUTOMATION", Opened = true })
+}
+
+local TabHandles = {
+    Main = Tabs.Automation:Tab({ Title = "Automation", Icon = "settings", Desc = "Automation Settings" })
+}
+
+-- Settings section
+TabHandles.Main:Paragraph({
+    Title = "Settings",
+    Desc = "Configure your automation settings",
+    Image = "settings",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local selectedSpeed = 125
+local speedInput = TabHandles.Main:Input({
+    Title = "Speed",
+    Value = tostring(selectedSpeed),
+    Placeholder = "Enter Speed...",
+    Callback = function(value)
+        selectedSpeed = tonumber(value) or 125
+        if getgenv().AutoSpeed and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = selectedSpeed
+        end
+    end
+})
+
+local autoSpeedToggle = TabHandles.Main:Toggle({
+    Title = "Set Speed",
+    Value = false,
+    Callback = function(state)
+        getgenv().AutoSpeed = state
+        while getgenv().AutoSpeed do
+            if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = selectedSpeed
+            end
+            task.wait()
+        end
+    end
+})
+
+game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
+    if getgenv().AutoSpeed then
+        local humanoid = char:WaitForChild("Humanoid")
+        humanoid.WalkSpeed = selectedSpeed
+    end
+end)
+
+local selectedSize = 2
+local sizeInput = TabHandles.Main:Input({
+    Title = "Size",
+    Value = tostring(selectedSize),
+    Placeholder = "Enter Size...",
+    Callback = function(value)
+        selectedSize = tonumber(value) or 2
+        if getgenv().AutoSize then
+            game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", selectedSize)
+        end
+    end
+})
+
+local autoSizeToggle = TabHandles.Main:Toggle({
+    Title = "Set Size",
+    Value = false,
+    Callback = function(state)
+        getgenv().AutoSize = state
+        while getgenv().AutoSize do
+            game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", selectedSize)
+            task.wait(0.1)
+        end
+    end
+})
+
+TabHandles.Main:Divider()
+
+-- Misc section
+TabHandles.Main:Paragraph({
+    Title = "Misc",
+    Desc = "Miscellaneous features",
+    Image = "more-horizontal",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local cameraZoomInput = TabHandles.Main:Input({
+    Title = "Camera Zoom",
+    Placeholder = "Enter zoom distance...",
+    Callback = function(value)
+        local zoom = tonumber(value)
+        if zoom then
+            zoom = math.clamp(zoom, 0.5, 400)
+            local player = game.Players.LocalPlayer
+            player.CameraMinZoomDistance = zoom
+            player.CameraMaxZoomDistance = zoom
+        end
+    end
+})
+
+local antiAFKEnabled = true
+local antiAFKConnection
+
+local function setupAntiAFK()
+    if antiAFKConnection then return end
+    local vu = game:GetService("VirtualUser")
+    antiAFKConnection = game.Players.LocalPlayer.Idled:Connect(function()
+        vu:Button2Down(Vector2.new(), workspace.CurrentCamera.CFrame)
+        task.wait(1)
+        vu:Button2Up(Vector2.new(), workspace.CurrentCamera.CFrame)
+    end)
+end
+
+if antiAFKEnabled then
+    setupAntiAFK()
+end
+
+local antiAFKToggle = TabHandles.Main:Toggle({
+    Title = "Anti AFK",
+    Value = antiAFKEnabled,
+    Callback = function(state)
+        antiAFKEnabled = state
+        if state then
+            setupAntiAFK()
+        else
+            if antiAFKConnection then
+                antiAFKConnection:Disconnect()
+                antiAFKConnection = nil
+            end
+        end
+    end
+})
+
+TabHandles.Main:Button({
+    Title = "Remove Portals",
+    Icon = "x",
+    Callback = function()
+        for _, portal in pairs(game:GetDescendants()) do
+            if portal.Name == "RobloxForwardPortals" then
+                portal:Destroy()
+            end
+        end
+        
+        if _G.AdRemovalConnection then
+            _G.AdRemovalConnection:Disconnect()
+        end
+        
+        _G.AdRemovalConnection = game.DescendantAdded:Connect(function(descendant)
+            if descendant.Name == "RobloxForwardPortals" then
+                descendant:Destroy()
+            end
+        end)
+        
+        WindUI:Notify({
+            Title = "Anuncios Eliminados",
+            Content = "Los anuncios de Roblox han sido eliminados",
+            Duration = 5
+        })
+    end
+})
+
+local timeOptions = {"Night", "Day", "Midnight"}
+local timeDropdown = TabHandles.Main:Dropdown({
+    Title = "Change Time",
+    Values = timeOptions,
+    Value = "Day",
+    Callback = function(selection)
+        local lighting = game:GetService("Lighting")
+        
+        if selection == "Night" then
+            lighting.ClockTime = 0
+        elseif selection == "Day" then
+            lighting.ClockTime = 12
+        elseif selection == "Midnight" then
+            lighting.ClockTime = 6
+        end
+        
+        WindUI:Notify({
+            Title = "Hora Cambiada",
+            Content = "Changed Time a: " .. selection,
+            Duration = 3
+        })
+    end
+})
+
+TabHandles.Main:Divider()
+
+-- Useful section
+TabHandles.Main:Paragraph({
+    Title = "Useful",
+    Desc = "Useful automation features",
+    Image = "zap",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local autoFortuneToggle = TabHandles.Main:Toggle({
+    Title = "Auto Fortune Wheel",
+    Value = false,
+    Callback = function(state)
+        _G.autoFortuneWheelActive = state
+        if state then
+            local function openFortuneWheel()
+                while _G.autoFortuneWheelActive do
+                    local args = {
+                        [1] = "openFortuneWheel",
+                        [2] = game:GetService("ReplicatedStorage"):WaitForChild("fortuneWheelChances"):WaitForChild("Fortune Wheel")
+                    }
+                    game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer(unpack(args))
+                    task.wait(0)
+                end
+            end
+            coroutine.wrap(openFortuneWheel)()
+        else
+            _G.autoFortuneWheelActive = false
+        end
+    end
+})
+
+local parts = {}
+local partSize = 2048
+local totalDistance = 50000
+local startPosition = Vector3.new(-2, -9.5, -2)
+local numberOfParts = math.ceil(totalDistance / partSize)
+
+local function createParts()
+    for x = 0, numberOfParts - 1 do
+        for z = 0, numberOfParts - 1 do
+            local newPartSide = Instance.new("Part")
+            newPartSide.Size = Vector3.new(partSize, 1, partSize)
+            newPartSide.Position = startPosition + Vector3.new(x * partSize, 0, z * partSize)
+            newPartSide.Anchored = true
+            newPartSide.Transparency = 1
+            newPartSide.CanCollide = true
+            newPartSide.Name = "Part_Side_" .. x .. "_" .. z
+            newPartSide.Parent = workspace
+            table.insert(parts, newPartSide)
+            
+            local newPartLeftRight = Instance.new("Part")
+            newPartLeftRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartLeftRight.Position = startPosition + Vector3.new(-x * partSize, 0, z * partSize)
+            newPartLeftRight.Anchored = true
+            newPartLeftRight.Transparency = 1
+            newPartLeftRight.CanCollide = true
+            newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
+            newPartLeftRight.Parent = workspace
+            table.insert(parts, newPartLeftRight)
+            
+            local newPartUpLeft = Instance.new("Part")
+            newPartUpLeft.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpLeft.Position = startPosition + Vector3.new(-x * partSize, 0, -z * partSize)
+            newPartUpLeft.Anchored = true
+            newPartUpLeft.Transparency = 1
+            newPartUpLeft.CanCollide = true
+            newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
+            newPartUpLeft.Parent = workspace
+            table.insert(parts, newPartUpLeft)
+            
+            local newPartUpRight = Instance.new("Part")
+            newPartUpRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpRight.Position = startPosition + Vector3.new(x * partSize, 0, -z * partSize)
+            newPartUpRight.Anchored = true
+            newPartUpRight.Transparency = 1
+            newPartUpRight.CanCollide = true
+            newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
+            newPartUpRight.Parent = workspace
+            table.insert(parts, newPartUpRight)
+        end
+    end
+end
+
+local function makePartsWalkthrough()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = false
+        end
+    end
+end
+
+local function makePartsSolid()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+end
+
+local waterWalkToggle = TabHandles.Main:Toggle({
+    Title = "Walk On Water",
+    Value = false,
+    Callback = function(state)
+        if state then
+            createParts()
+        else
+            makePartsWalkthrough()
+        end
+    end
+})
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local godModeToggle = false
+
+local function autoJoinBrawl()
+    while godModeToggle do
+        pcall(function()
+            ReplicatedStorage.rEvents.brawlEvent:FireServer("joinBrawl")
+        end)
+        task.wait(0.1)
+    end
+end
+
+local godModeToggleUI = TabHandles.Main:Toggle({
+    Title = "God Mode",
+    Value = false,
+    Callback = function(state)
+        godModeToggle = state
+        if state then
+            task.spawn(autoJoinBrawl)
+        end
+    end
+})
+
+player.CharacterAdded:Connect(function()
+    if godModeToggle then
+        task.spawn(autoJoinBrawl)
+    end
+end)
+
+local disableTradeToggle = TabHandles.Main:Toggle({
+    Title = "Disable Trade",
+    Value = false,
+    Callback = function(state)
+        if state then
+            game:GetService("ReplicatedStorage").rEvents.tradingEvent:FireServer("disableTrading")
+        else
+            game:GetService("ReplicatedStorage").rEvents.tradingEvent:FireServer("enableTrading")
+        end
+    end
+})
+
+local infJumpEnabled = false
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+player.CharacterAdded:Connect(function(char)
+    character = char
+    humanoid = char:WaitForChild("Humanoid")
+end)
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    if infJumpEnabled and humanoid then
+        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+local infJumpToggle = TabHandles.Main:Toggle({
+    Title = "Inf Jump",
+    Value = false,
+    Callback = function(state)
+        infJumpEnabled = state
+    end
+})
+
+local autoEatBoostsEnabled = false
+
+local boostsList = {
+    "ULTRA Shake",
+    "TOUGH Bar",
+    "Protein Shake",
+    "Energy Shake",
+    "Protein Bar",
+    "Energy Bar",
+    "Tropical Shake"
+}
+
+local function eatAllBoosts()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    for _, boostName in ipairs(boostsList) do
+        local boost = backpack:FindFirstChild(boostName)
+        while boost do
+            boost.Parent = character
+            pcall(function()
+                boost:Activate()
+            end)
+            task.wait(0)
+            boost = backpack:FindFirstChild(boostName)
+        end
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatBoostsEnabled then
+            eatAllBoosts()
+            task.wait(2)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+local autoEatToggle = TabHandles.Main:Toggle({
+    Title = "Auto Clear Inventory",
+    Value = false,
+    Callback = function(state)
+        autoEatBoostsEnabled = state
+    end
+})
+
+TabHandles.Main:Divider()
+
+-- Protection section
+TabHandles.Main:Paragraph({
+    Title = "Protection",
+    Desc = "Protection features",
+    Image = "shield",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local antiKnockbackToggle = TabHandles.Main:Toggle({
+    Title = "Anti-Knockback",
+    Value = false,
+    Callback = function(state)
+        if state then
+            local playerName = game.Players.LocalPlayer.Name
+            local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
+            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            bodyVelocity.P = 1250
+            bodyVelocity.Parent = rootPart
+        else
+            local playerName = game.Players.LocalPlayer.Name
+            local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+            local existingVelocity = rootPart:FindFirstChild("BodyVelocity")
+            if existingVelocity and existingVelocity.MaxForce == Vector3.new(100000, 0, 100000) then
+                existingVelocity:Destroy()
+            end
+        end
+    end
+})
+
+local lockPosToggle = TabHandles.Main:Toggle({
+    Title = "Lock Position",
+    Value = false,
+    Callback = function(state)
+        if state then
+            local currentPos = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            getgenv().posLock = game:GetService("RunService").Heartbeat:Connect(function()
+                if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+        else
+            if getgenv().posLock then
+                getgenv().posLock:Disconnect()
+                getgenv().posLock = nil
+            end
+        end
+    end
+})
+
+-- Adicionar esta seção após as outras tabs existentes
+local TabsKilling = Window:Section({ Title = "Killing", Opened = true })
+local TabHandlesKilling = TabsKilling:Tab({ Title = "Killing", Icon = "target", Desc = "Killing Features" })
+
+TabHandlesKilling:Paragraph({
+    Title = "Kill Aura",
+    Desc = "Configure your killing settings",
+    Image = "target",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local petOptions = {"Wild Wizard", "Mighty Monster"}
+local petDropdown = TabHandlesKilling:Dropdown({
+    Title = "Select Pet",
+    Values = petOptions,
+    Value = "Wild Wizard",
+    Callback = function(text)
+        local petsFolder = game.Players.LocalPlayer.petsFolder
+        for _, folder in pairs(petsFolder:GetChildren()) do
+            if folder:IsA("Folder") then
+                for _, pet in pairs(folder:GetChildren()) do
+                    game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("unequipPet", pet)
+                end
+            end
+        end
+        task.wait(0.2)
+
+        local petName = text
+        local petsToEquip = {}
+
+        for _, pet in pairs(game.Players.LocalPlayer.petsFolder.Unique:GetChildren()) do
+            if pet.Name == petName then
+                table.insert(petsToEquip, pet)
+            end
+        end
+
+        for i = 1, math.min(8, #petsToEquip) do
+            game:GetService("ReplicatedStorage").rEvents.equipPetEvent:FireServer("equipPet", petsToEquip[i])
+            task.wait(0.1)
+        end
+    end
+})
+
+local noPunchToggle = TabHandlesKilling:Toggle({
+    Title = "No Punch Animation",
+    Value = false,
+    Callback = function(state)
+        if state then
+            local blockedAnimations = {
+                ["rbxassetid://3638729053"] = true,
+                ["rbxassetid://3638767427"] = true,
+            }
+
+            local function stopBlockedAnimations(humanoid)
+                for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+                    if track.Animation then
+                        local animId = track.Animation.AnimationId
+                        local animName = track.Name:lower()
+                        if blockedAnimations[animId] or animName:match("punch") or animName:match("attack") or animName:match("right") then
+                            track:Stop()
+                        end
+                    end
+                end
+            end
+
+            local function setupAnimationBlocking()
+                local char = LocalPlayer.Character
+                if not char or not char:FindFirstChild("Humanoid") then return end
+                local humanoid = char:FindFirstChild("Humanoid")
+
+                stopBlockedAnimations(humanoid)
+
+                if not _G.AnimBlockConnection then
+                    _G.AnimBlockConnection = humanoid.AnimationPlayed:Connect(function(track)
+                        if track.Animation then
+                            local animId = track.Animation.AnimationId
+                            local animName = track.Name:lower()
+                            if blockedAnimations[animId] or animName:match("punch") or animName:match("attack") or animName:match("right") then
+                                track:Stop()
+                            end
+                        end
+                    end)
+                end
+            end
+
+            setupAnimationBlocking()
+
+            _G.AutoPunchLoop = true
+            task.spawn(function()
+                while _G.AutoPunchLoop do
+                    local char = LocalPlayer.Character
+                    if char and char:FindFirstChild("Humanoid") then
+                        stopBlockedAnimations(char.Humanoid)
+                    end
+
+                    local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or (char and char:FindFirstChild("Punch"))
+                    if punch then
+                        if punch.Parent ~= char then
+                            punch.Parent = char
+                        end
+                        LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                        LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+                    end
+                    task.wait(0.01)
+                end
+            end)
+
+            if not _G.CharacterAddedConnection then
+                _G.CharacterAddedConnection = LocalPlayer.CharacterAdded:Connect(function()
+                    task.wait(1)
+                    setupAnimationBlocking()
+                end)
+            end
+        else
+            _G.AutoPunchLoop = false
+            if _G.AnimBlockConnection then _G.AnimBlockConnection:Disconnect() _G.AnimBlockConnection = nil end
+        end
+    end
+})
+
+TabHandlesKilling:Divider()
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function checkCharacter()
+    if not LocalPlayer.Character then
+        repeat task.wait() until LocalPlayer.Character
+    end
+    return LocalPlayer.Character
+end
+
+local function gettool()
+    for _, v in pairs(LocalPlayer.Backpack:GetChildren()) do
+        if v.Name == "Punch" and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end
+    LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+    LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+end
+
+local function isPlayerAlive(player)
+    return player and player.Character
+       and player.Character:FindFirstChild("HumanoidRootPart")
+       and player.Character:FindFirstChild("Humanoid")
+       and player.Character.Humanoid.Health > 0
+end
+
+local function killPlayer(target)
+    if not isPlayerAlive(target) then return end
+    local character = checkCharacter()
+    if character and character:FindFirstChild("LeftHand") then
+        pcall(function()
+            firetouchinterest(target.Character.HumanoidRootPart, character.LeftHand, 0)
+            firetouchinterest(target.Character.HumanoidRootPart, character.LeftHand, 1)
+            gettool()
+        end)
+    end
+end
+
+local function getPlayerDisplayText(player)
+    return player.DisplayName .. " | " .. player.Name
+end
+
+if not _G.whitelistedPlayers then _G.whitelistedPlayers = {} end
+if not _G.blacklistedPlayers then _G.blacklistedPlayers = {} end
+
+local function isWhitelisted(player)
+    for _, name in ipairs(_G.whitelistedPlayers) do
+        if name:lower() == player.Name:lower() then
+            return true
+        end
+    end
+    return false
+end
+
+local function isBlacklisted(player)
+    for _, name in ipairs(_G.blacklistedPlayers) do
+        if name:lower() == player.Name:lower() then
+            return true
+        end
+    end
+    return false
+end
+
+TabHandlesKilling:Paragraph({
+    Title = "Player Management",
+    Desc = "Manage whitelist and blacklist",
+    Image = "users",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local whitelistInput = TabHandlesKilling:Input({
+    Title = "Whitelist",
+    Placeholder = "Enter player name...",
+    Callback = function(inputText)
+        local playerName = inputText:match("^%s*(.-)%s*$")
+        if playerName ~= "" then
+            for _, name in ipairs(_G.whitelistedPlayers) do
+                if name:lower() == playerName:lower() then
+                    return
+                end
+            end
+            table.insert(_G.whitelistedPlayers, playerName)
+        end
+    end
+})
+
+local function refreshPlayerDropdowns()
+    local playerList = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(playerList, getPlayerDisplayText(player))
+        end
+    end
+    return playerList
+end
+
+local playerWhitelistDropdown = TabHandlesKilling:Dropdown({
+    Title = "Whitelist Player",
+    Values = refreshPlayerDropdowns(),
+    Callback = function(selectedText)
+        local playerName = selectedText:match("| (.+)$")
+        if playerName then
+            playerName = playerName:match("^%s*(.-)%s*$")
+            for _, name in ipairs(_G.whitelistedPlayers) do
+                if name:lower() == playerName:lower() then return end
+            end
+            table.insert(_G.whitelistedPlayers, playerName)
+        end
+    end
+})
+
+TabHandlesKilling:Button({
+    Title = "Clear Whitelist",
+    Icon = "trash-2",
+    Callback = function()
+        _G.whitelistedPlayers = {}
+        WindUI:Notify({
+            Title = "Whitelist Cleared",
+            Content = "All players removed from whitelist",
+            Duration = 3
+        })
+    end
+})
+
+local whitelistFriendsToggle = TabHandlesKilling:Toggle({
+    Title = "Whitelist Friends",
+    Value = false,
+    Callback = function(state)
+        if state then
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer and player:IsFriendsWith(LocalPlayer.UserId) then
+                    local already = false
+                    for _, name in ipairs(_G.whitelistedPlayers) do
+                        if name:lower() == player.Name:lower() then
+                            already = true
+                            break
+                        end
+                    end
+                    if not already then
+                        table.insert(_G.whitelistedPlayers, player.Name)
+                    end
+                end
+            end
+            WindUI:Notify({
+                Title = "Friends Whitelisted",
+                Content = "All friends added to whitelist",
+                Duration = 3
+            })
+        end
+    end
+})
+
+local megaSwitchToggle = TabHandlesKilling:Toggle({
+    Title = "Safe Spot + Nan Size + Equip + Auto Punch + Lock",
+    Value = false,
+    Callback = function(state)
+        local LocalPlayer = game.Players.LocalPlayer
+        local sizeToSet = 0/0
+        
+        if state then
+            local posX, posY, posZ = 100000, -200, 100000
+            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+            safePlatform = Instance.new("Part")
+            safePlatform.Size = Vector3.new(50, 1, 50)
+            safePlatform.Position = Vector3.new(posX, posY - 3, posZ)
+            safePlatform.Anchored = true
+            safePlatform.CanCollide = true
+            safePlatform.Color = Color3.fromRGB(255, 0, 0)
+            safePlatform.Name = "SafePlatform"
+            safePlatform.Parent = workspace
+
+            task.wait(0.2)
+            humanoidRootPart.CFrame = CFrame.new(posX, posY, posZ)
+
+            WindUI:Notify({
+                Title = "Teletransporte",
+                Content = "Teleported to safe spot",
+                Duration = 3
+            })
+
+            local currentPos = humanoidRootPart.CFrame
+            posLockConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = currentPos
+                end
+            end)
+
+            task.spawn(function()
+                while megaSwitchToggle.Value do
+                    pcall(function()
+                        game:GetService("ReplicatedStorage").rEvents.changeSpeedSizeRemote:InvokeServer("changeSize", sizeToSet)
+                    end)
+
+                    local punch = LocalPlayer.Backpack:FindFirstChild("Punch")
+                    if punch then
+                        punch.Parent = LocalPlayer.Character
+                    end
+                    local egg = LocalPlayer.Backpack:FindFirstChild("Protein Egg")
+                    if egg then
+                        egg.Parent = LocalPlayer.Character
+                    end
+
+                    local punchTool = LocalPlayer.Backpack:FindFirstChild("Punch") or LocalPlayer.Character:FindFirstChild("Punch")
+                    if punchTool then
+                        if punchTool.Parent ~= LocalPlayer.Character then
+                            punchTool.Parent = LocalPlayer.Character
+                        end
+                        LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+                        LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+                    end
+
+                    task.wait(0.01)
+                end
+            end)
+        else
+            if posLockConnection then
+                posLockConnection:Disconnect()
+                posLockConnection = nil
+            end
+            if safePlatform then
+                safePlatform:Destroy()
+                safePlatform = nil
+            end
+        end
+    end
+})
+
+local blacklistInput = TabHandlesKilling:Input({
+    Title = "Blacklist",
+    Placeholder = "Enter player name...",
+    Callback = function(inputText)
+        local playerName = inputText:match("^%s*(.-)%s*$")
+        if playerName ~= "" then
+            for _, name in ipairs(_G.blacklistedPlayers) do
+                if name:lower() == playerName:lower() then
+                    return
+                end
+            end
+            table.insert(_G.blacklistedPlayers, playerName)
+        end
+    end
+})
+
+local playerBlacklistDropdown = TabHandlesKilling:Dropdown({
+    Title = "Blacklist Player",
+    Values = refreshPlayerDropdowns(),
+    Callback = function(selectedText)
+        local playerName = selectedText:match("| (.+)$")
+        if playerName then
+            playerName = playerName:match("^%s*(.-)%s*$")
+            for _, name in ipairs(_G.blacklistedPlayers) do
+                if name:lower() == playerName:lower() then return end
+            end
+            table.insert(_G.blacklistedPlayers, playerName)
+        end
+    end
+})
+
+TabHandlesKilling:Button({
+    Title = "Clear Blacklist",
+    Icon = "trash-2",
+    Callback = function()
+        _G.blacklistedPlayers = {}
+        WindUI:Notify({
+            Title = "Blacklist Cleared",
+            Content = "All players removed from blacklist",
+            Duration = 3
+        })
+    end
+})
+
+TabHandlesKilling:Divider()
+
+TabHandlesKilling:Paragraph({
+    Title = "Killing Features",
+    Desc = "Various killing automation options",
+    Image = "skull",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local killBlacklistToggle = TabHandlesKilling:Toggle({
+    Title = "Kill Blacklisted Only",
+    Value = false,
+    Callback = function(state)
+        _G.killBlacklistedOnly = state
+        if state then
+            if not _G.blacklistKillConnection then
+                _G.blacklistKillConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer and isBlacklisted(player) then
+                            killPlayer(player)
+                        end
+                    end
+                end)
+            end
+        else
+            if _G.blacklistKillConnection then
+                _G.blacklistKillConnection:Disconnect()
+                _G.blacklistKillConnection = nil
+            end
+        end
+    end
+})
+
+local killAllToggle = TabHandlesKilling:Toggle({
+    Title = "Kill All",
+    Value = false,
+    Callback = function(state)
+        _G.killAll = state
+        if state then
+            if not _G.killAllConnection then
+                _G.killAllConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer and not isWhitelisted(player) then
+                            killPlayer(player)
+                        end
+                    end
+                end)
+            end
+        else
+            if _G.killAllConnection then
+                _G.killAllConnection:Disconnect()
+                _G.killAllConnection = nil
+            end
+        end
+    end
+})
+
+local killEnemy01kToggle = TabHandlesKilling:Toggle({
+    Title = "Kill Enemy 0/1k",
+    Value = false,
+    Callback = function(state)
+        _G.killAll = state
+        if state then
+            if not _G.killAllConnection then
+                _G.killAllConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    if _G.killAll then
+                        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                            if player ~= game.Players.LocalPlayer and not isWhitelisted(player) then
+                                local strength = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Strength")
+                                if strength and strength.Value >= 0 and strength.Value <= 1000 then
+                                    killPlayer(player)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        else
+            if _G.killAllConnection then
+                _G.killAllConnection:Disconnect()
+                _G.killAllConnection = nil
+            end
+        end
+    end
+})
+
+local killEnemyBigToggle = TabHandlesKilling:Toggle({
+    Title = "Kill Enemy Bigger 10t/90QI",
+    Value = false,
+    Callback = function(state)
+        _G.killAll = state
+        if state then
+            if not _G.killAllConnection then
+                _G.killAllConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    if _G.killAll then
+                        for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                            if player ~= game.Players.LocalPlayer and not isWhitelisted(player) and not game.Players.LocalPlayer:IsFriendsWith(player.UserId) then
+                                local strength = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Strength")
+                                if strength and strength.Value >= 1e14 and strength.Value <= 9e16 then
+                                    killPlayer(player)
+                                end
+                            end
+                        end
+                    end
+                end)
+            end
+        else
+            if _G.killAllConnection then
+                _G.killAllConnection:Disconnect()
+                _G.killAllConnection = nil
+            end
+        end
+    end
+})
+
+TabHandlesKilling:Divider()
+
+TabHandlesKilling:Paragraph({
+    Title = "UI Features",
+    Desc = "Interface and display options",
+    Image = "monitor",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local killsShown = false
+local killsGui = nil
+
+TabHandlesKilling:Button({
+    Title = "Show Kills UI",
+    Icon = "eye",
+    Callback = function()
+        killsShown = not killsShown
+
+        if killsShown then
+            if not killsGui then
+                killsGui = Instance.new("ScreenGui")
+                killsGui.Name = "KillsGui"
+                killsGui.ResetOnSpawn = false
+                killsGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+                local killsFrame = Instance.new("Frame")
+                killsFrame.Size = UDim2.new(0, 180, 0, 55)
+                killsFrame.Position = UDim2.new(0.5, -90, 0, 60)
+                killsFrame.BackgroundColor3 = Color3.fromRGB(61, 10, 161)
+                killsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                killsFrame.Active = true
+                killsFrame.Draggable = true
+                killsFrame.Parent = killsGui
+
+                local titleLabel = Instance.new("TextLabel")
+                titleLabel.Size = UDim2.new(1, 0, 0, 20)
+                titleLabel.Position = UDim2.new(0, 0, 0, 0)
+                titleLabel.BackgroundTransparency = 1
+                titleLabel.Text = "Sad V1"
+                titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                titleLabel.Font = Enum.Font.SourceSansBold
+                titleLabel.TextScaled = true
+                titleLabel.Parent = killsFrame
+
+                local killsLabel = Instance.new("TextLabel")
+                killsLabel.Size = UDim2.new(1, 0, 0, 35)
+                killsLabel.Position = UDim2.new(0, 0, 0, 20)
+                killsLabel.BackgroundTransparency = 1
+                killsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                killsLabel.TextScaled = true
+                killsLabel.Font = Enum.Font.SourceSansBold
+                killsLabel.Parent = killsFrame
+
+                coroutine.wrap(function()
+                    while killsGui and killsGui.Parent do
+                        local kills = LocalPlayer:FindFirstChild("leaderstats") and LocalPlayer.leaderstats:FindFirstChild("Kills")
+                        if kills then
+                            killsLabel.Text = "Kills: " .. tostring(kills.Value)
+                        else
+                            killsLabel.Text = "Kills: 0"
+                        end
+                        task.wait(0.2)
+                    end
+                end)()
+            else
+                killsGui.Enabled = true
+            end
+            WindUI:Notify({
+                Title = "Kills UI",
+                Content = "Kills display enabled",
+                Duration = 2
+            })
+        else
+            if killsGui then
+                killsGui.Enabled = false
+            end
+            WindUI:Notify({
+                Title = "Kills UI",
+                Content = "Kills display disabled",
+                Duration = 2
+            })
+        end
+    end
+})
+
+local deathRangeInput = TabHandlesKilling:Input({
+    Title = "Death Ring Range (1-140)",
+    Placeholder = "20",
+    Callback = function(text)
+        local range = tonumber(text)
+        if range then
+            _G.deathRingRange = math.clamp(range, 1, 140)
+            WindUI:Notify({
+                Title = "Death Ring",
+                Content = "Range set to: " .. _G.deathRingRange,
+                Duration = 2
+            })
+        end
+    end
+})
+
+local targetPlayerInput = TabHandlesKilling:Input({
+    Title = "Player Name (Optional)",
+    Placeholder = "Enter target player name...",
+    Callback = function(text)
+        _G.targetPlayerName = text
+        if text ~= "" then
+            WindUI:Notify({
+                Title = "Target Set",
+                Content = "Target: " .. text,
+                Duration = 2
+            })
+        end
+    end
+})
+
+local deathRingToggle = TabHandlesKilling:Toggle({
+    Title = "Death Ring",
+    Value = false,
+    Callback = function(state)
+        _G.deathRingEnabled = state
+        if state then
+            if not _G.deathRingConnection then
+                _G.deathRingConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                    local character = checkCharacter()
+                    local myPos = character and character:FindFirstChild("HumanoidRootPart") and character.HumanoidRootPart.Position
+                    if myPos then
+                        for _, player in ipairs(Players:GetPlayers()) do
+                            if player ~= LocalPlayer and not isWhitelisted(player) and isPlayerAlive(player) then
+                                if (myPos - player.Character.HumanoidRootPart.Position).Magnitude <= (_G.deathRingRange or 20) then
+                                    killPlayer(player)
+                                end
+                            end
+                        end
+                    end
+                    task.wait()
+                end)
+            end
+            WindUI:Notify({
+                Title = "Death Ring",
+                Content = "Death Ring enabled",
+                Duration = 2
+            })
+        else
+            if _G.deathRingConnection then
+                _G.deathRingConnection:Disconnect()
+                _G.deathRingConnection = nil
+            end
+            WindUI:Notify({
+                Title = "Death Ring",
+                Content = "Death Ring disabled",
+                Duration = 2
+            })
+        end
+    end
+})
+
+TabHandlesKilling:Divider()
+
+TabHandlesKilling:Paragraph({
+    Title = "Current Lists",
+    Desc = "Whitelisted and blacklisted players",
+    Image = "list",
+    ImageSize = 20,
+    Color = Color3.fromHex("#cf0d0d"),
+})
+
+local whitelistDisplay = TabHandlesKilling:Paragraph({
+    Title = "Whitelisted Players: None",
+    Desc = "No players whitelisted",
+    Image = "user-check",
+    ImageSize = 16,
+    Color = Color3.fromHex("#30ff6a")
+})
+
+local blacklistDisplay = TabHandlesKilling:Paragraph({
+    Title = "Blacklisted Players: None",
+    Desc = "No players blacklisted",
+    Image = "user-x",
+    ImageSize = 16,
+    Color = Color3.fromHex("#ff3030")
+})
+
+local function updateListsDisplay()
+    if #_G.whitelistedPlayers == 0 then
+        whitelistDisplay:SetTitle("Whitelisted Players: None")
+        whitelistDisplay:SetDesc("No players whitelisted")
+    else
+        whitelistDisplay:SetTitle("Whitelisted Players: " .. #_G.whitelistedPlayers)
+        whitelistDisplay:SetDesc(table.concat(_G.whitelistedPlayers, ", "))
+    end
+
+    if #_G.blacklistedPlayers == 0 then
+        blacklistDisplay:SetTitle("Blacklisted Players: None")
+        blacklistDisplay:SetDesc("No players blacklisted")
+    else
+        blacklistDisplay:SetTitle("Blacklisted Players: " .. #_G.blacklistedPlayers)
+        blacklistDisplay:SetDesc(table.concat(_G.blacklistedPlayers, ", "))
+    end
+end
+
+local function refreshAllDropdowns()
+    local playerList = refreshPlayerDropdowns()
+    playerWhitelistDropdown:Refresh(playerList, true)
+    playerBlacklistDropdown:Refresh(playerList, true)
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        refreshAllDropdowns()
+        updateListsDisplay()
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    refreshAllDropdowns()
+    updateListsDisplay()
+end)
+
+updateListsDisplay()
+
+task.spawn(function()
+    while true do
+        updateListsDisplay()
+        task.wait(1)
+    end
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        local displayText = getPlayerDisplayText(player)
+        playerWhitelistDropdown:Add(displayText)
+        playerBlacklistDropdown:Add(displayText)
+    end
+end
+
+TabHandlesKilling:Divider()
+
+TabHandlesKilling:Paragraph({
+    Title = "Killing Features Ready",
+    Desc = "All killing features are now available",
+    Image = "check-circle",
+    ImageSize = 20,
+    Color = Color3.fromHex("#30ff6a")
+})
+
+task.spawn(function()
+    while true do
+        refreshAllDropdowns()
+        task.wait(5)
+    end
+end)
+
+Window:OnClose(function()
+    print("Window closed")
+end)
+
+Window:OnDestroy(function()
+    print("Window destroyed")
+end)
