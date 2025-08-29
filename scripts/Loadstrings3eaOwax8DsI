@@ -1,0 +1,717 @@
+
+local whitelist = {
+    1408609880
+}
+
+local player = game.Players.LocalPlayer
+local playerId = player.UserId
+
+print("👤 Player ID detected:", playerId)
+
+-- Function to check if the player is whitelisted
+local function isPlayerWhitelisted(playerId)
+    for _, id in ipairs(whitelist) do
+        if id == playerId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check if the player is whitelisted
+if not isPlayerWhitelisted(playerId) then
+    warn("❌ Access denied for ID:", playerId)
+    player:Kick(" You are not allowed to use this script. + U Have Been Rebirthed + Doxed")
+    return
+end
+
+print("✅ ID " .. playerId .. " allowed. Loading the script...")
+
+-- Function to safely load a script from a URL
+local function safeLoad(url, name)
+    print("🔄 Loading: " .. name)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+
+    if not success then
+        warn("❌ Loading Failed: " .. name .. " - " .. tostring(result))
+        return nil
+    end
+
+    print("✅ " .. name .. " Successfully Loaded!")
+    return result
+end
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imhenne187/cracking/refs/heads/main/LunaHub/LunaLibrary.lua", true))()
+
+local window = library:AddWindow("ENCRYPTED V2 | Clan Version", {
+    main_color = Color3.fromRGB(0, 0, 0), 
+    min_size = Vector2.new(470, 470), 
+    can_resize = false,
+})
+
+local Main = window:AddTab("Main")
+
+local LocalPlayersFolder = Main:AddFolder("Local Players")
+
+local autoEatEnabled = false
+
+local function eatProteinEgg()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatEnabled then
+            eatProteinEgg()
+            task.wait(1800)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+
+
+LocalPlayersFolder:AddSwitch("Auto Eat Protein Egg Every 30 Minutes", function(state)
+    autoEatEnabled = state
+end)
+
+local autoEatEnabled = false
+
+local function eatProteinEgg()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatEnabled then
+            eatProteinEgg()
+            task.wait(3600)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+LocalPlayersFolder:AddSwitch("Auto Eat Protein Egg Every 1 hour", function(state)
+    autoEatEnabled = state
+end)
+
+
+
+
+local MiscFolder = Main:AddFolder("Misc")
+MiscFolder:AddSwitch("Auto Farm (Equip Any tool)", function(State)
+   autoRepToggle = State
+    if State then
+        task.spawn(function()
+            while autoRepToggle do
+                game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent"):FireServer("rep")
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+MiscFolder:AddLabel("---Script Hub---")
+MiscFolder:AddButton("Permanent ShiftLock", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MiniNoobie/ShiftLockx/main/Shiftlock-MiniNoobie"))()
+end)
+MiscFolder:AddLabel("---Time---")
+MiscFolder:AddButton("Night", function()
+    Lighting.ClockTime = 0
+end)
+MiscFolder:AddButton("Morning", function()
+    Lighting.ClockTime = 6
+end)
+MiscFolder:AddButton("Day", function()
+    Lighting.ClockTime = 12
+end)
+MiscFolder:AddLabel("----Farming----")
+local AutoBrawlFolder = Main:AddFolder("Auto Brawl")
+AutoBrawlFolder:AddSwitch("Auto Win Brawl", function(state)
+    getgenv().autoWinBrawl = state
+    task.spawn(function()
+        while getgenv().autoWinBrawl and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Win")
+            task.wait(1)
+        end
+    end)
+end)
+AutoBrawlFolder:AddSwitch("Auto Join Brawl (For Farming)", function(state)
+    getgenv().autoBrawlFarm = state
+    task.spawn(function()
+        while getgenv().autoBrawlFarm and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Farm")
+            task.wait(1)
+        end
+    end)
+end)
+
+AutoBrawlFolder:AddSwitch("Auto Brawl (God Mode)", function(State)
+  godModeToggle = State
+            if State then
+                task.spawn(function()
+                    while godModeToggle do
+                        game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                        task.wait(0)
+                    end
+                end)
+            end
+end)
+
+
+
+
+local OpStuffFolder = Main:AddFolder("Op stuff (for farm)")
+OpStuffFolder:AddSwitch("Anti Knockback", function(Value)
+ if Value then
+        local playerName = game.Players.LocalPlayer.Name
+        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        bodyVelocity.P = 1250
+        bodyVelocity.Parent = rootPart
+    else
+        local playerName = game.Players.LocalPlayer.Name
+        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+        local existingVelocity = rootPart:FindFirstChild("BodyVelocity")
+        if existingVelocity and existingVelocity.MaxForce == Vector3.new(100000, 0, 100000) then
+            existingVelocity:Destroy()
+        end
+    end
+end)
+OpStuffFolder:AddSwitch("Auto Pushups with Rock (10M) and Auto Punch", function(state)
+    getgenv().autoPushups10M = state
+    task.spawn(function()
+        while getgenv().autoPushups10M and LocalPlayer.Character do
+            local pushups = LocalPlayer.Backpack:FindFirstChild("Pushups") or LocalPlayer.Character:FindFirstChild("Pushups")
+            if pushups then
+                pushups.Parent = LocalPlayer.Character
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+                local rock = Workspace.machinesFolder:FindFirstChild("Ancient Jungle Rock")
+                if rock and LocalPlayer:FindFirstChild("Durability") and LocalPlayer.Durability.Value >= 10000000 then
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 0)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 0)
+                    task.wait()
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 1)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 1)
+                    ReplicatedStorage.muscleEvent:FireServer("punch", "rightHand")
+                    ReplicatedStorage.muscleEvent:FireServer("punch", "leftHand")
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+OpStuffFolder:AddSwitch("Free AutoLift Gamepass", function(Value)
+    local gamepassFolder = game:GetService("ReplicatedStorage"):FindFirstChild("gamepassIds")
+    local player = game:GetService("Players").LocalPlayer
+
+    if not gamepassFolder or not player then return end
+
+    if Value then
+        for _, gamepass in pairs(gamepassFolder:GetChildren()) do
+            if not player.ownedGamepasses:FindFirstChild(gamepass.Name) then
+                local value = Instance.new("IntValue")
+                value.Name = gamepass.Name
+                value.Value = gamepass.Value
+                value.Parent = player.ownedGamepasses
+            end
+        end
+    else
+        for _, gamepass in pairs(player.ownedGamepasses:GetChildren()) do
+            gamepass:Destroy()
+        end
+    end
+end)
+
+local parts = {}
+local partSize = 2048
+local totalDistance = 50000
+local startPosition = Vector3.new(-2, -9.5, -2)
+local numberOfParts = math.ceil(totalDistance / partSize)
+
+local function createParts()
+    for x = 0, numberOfParts - 1 do
+        for z = 0, numberOfParts - 1 do
+            local newPartSide = Instance.new("Part")
+            newPartSide.Size = Vector3.new(partSize, 1, partSize)
+            newPartSide.Position = startPosition + Vector3.new(x * partSize, 0, z * partSize)
+            newPartSide.Anchored = true
+            newPartSide.Transparency = 1
+            newPartSide.CanCollide = true
+            newPartSide.Name = "Part_Side_" .. x .. "_" .. z
+            newPartSide.Parent = workspace
+            table.insert(parts, newPartSide)
+            
+            local newPartLeftRight = Instance.new("Part")
+            newPartLeftRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartLeftRight.Position = startPosition + Vector3.new(-x * partSize, 0, z * partSize)
+            newPartLeftRight.Anchored = true
+            newPartLeftRight.Transparency = 1
+            newPartLeftRight.CanCollide = true
+            newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
+            newPartLeftRight.Parent = workspace
+            table.insert(parts, newPartLeftRight)
+            
+            local newPartUpLeft = Instance.new("Part")
+            newPartUpLeft.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpLeft.Position = startPosition + Vector3.new(-x * partSize, 0, -z * partSize)
+            newPartUpLeft.Anchored = true
+            newPartUpLeft.Transparency = 1
+            newPartUpLeft.CanCollide = true
+            newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
+            newPartUpLeft.Parent = workspace
+            table.insert(parts, newPartUpLeft)
+            
+            local newPartUpRight = Instance.new("Part")
+            newPartUpRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpRight.Position = startPosition + Vector3.new(x * partSize, 0, -z * partSize)
+            newPartUpRight.Anchored = true
+            newPartUpRight.Transparency = 1
+            newPartUpRight.CanCollide = true
+            newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
+            newPartUpRight.Parent = workspace
+            table.insert(parts, newPartUpRight)
+        end
+    end
+end
+
+local function makePartsWalkthrough()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = false
+        end
+    end
+end
+
+local function makePartsSolid()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+end
+
+OpStuffFolder:AddSwitch("Walk on Water", function(bool)
+        if bool then
+        createParts()
+    else
+        makePartsWalkthrough()
+    end
+
+end)
+
+OpStuffFolder:AddButton("Remove Ad Portal", function()
+    for _, portal in pairs(Workspace:GetDescendants()) do
+        if portal.Name:match("AdPortal") then
+            portal:Destroy()
+        end
+    end
+end)
+
+local KillingTab = Window:AddTab("Killing")
+KillingTab:AddSwitch("Auto Equip Punch", function(state)
+    autoEquipPunch = state
+	task.spawn(function()
+		while autoEquipPunch do
+			local punch = LocalPlayer.Backpack:FindFirstChild("Punch")
+			if punch then
+				punch.Parent = LocalPlayer.Character
+			end
+			task.wait(0.1)
+		end
+	end)
+end)
+KillingTab:AddSwitch("Auto Punch {With Movement}", function(state)
+	
+local whitelist = {
+    1408609880
+}
+
+local player = game.Players.LocalPlayer
+local playerId = player.UserId
+
+print("👤 Player ID detected:", playerId)
+
+-- Function to check if the player is whitelisted
+local function isPlayerWhitelisted(playerId)
+    for _, id in ipairs(whitelist) do
+        if id == playerId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check if the player is whitelisted
+if not isPlayerWhitelisted(playerId) then
+    warn("❌ Access denied for ID:", playerId)
+    player:Kick(" You are not allowed to use this script. + U Have Been Rebirthed + Doxed")
+    return
+end
+
+print("✅ ID " .. playerId .. " allowed. Loading the script...")
+
+-- Function to safely load a script from a URL
+local function safeLoad(url, name)
+    print("🔄 Loading: " .. name)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+
+    if not success then
+        warn("❌ Loading Failed: " .. name .. " - " .. tostring(result))
+        return nil
+    end
+
+    print("✅ " .. name .. " Successfully Loaded!")
+    return result
+end
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imhenne187/cracking/refs/heads/main/LunaHub/LunaLibrary.lua", true))()
+
+local window = library:AddWindow("ENCRYPTED V2 | Clan Version", {
+    main_color = Color3.fromRGB(0, 0, 0), 
+    min_size = Vector2.new(470, 470), 
+    can_resize = false,
+})
+
+local Main = window:AddTab("Main")
+
+local LocalPlayersFolder = Main:AddFolder("Local Players")
+
+local autoEatEnabled = false
+
+local function eatProteinEgg()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatEnabled then
+            eatProteinEgg()
+            task.wait(1800)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+
+
+LocalPlayersFolder:AddSwitch("Auto Eat Protein Egg Every 30 Minutes", function(state)
+    autoEatEnabled = state
+end)
+
+local autoEatEnabled = false
+
+local function eatProteinEgg()
+    local player = game.Players.LocalPlayer
+    local backpack = player:WaitForChild("Backpack")
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local egg = backpack:FindFirstChild("Protein Egg")
+    if egg then
+        egg.Parent = character
+        pcall(function()
+            egg:Activate()
+        end)
+    end
+end
+
+task.spawn(function()
+    while true do
+        if autoEatEnabled then
+            eatProteinEgg()
+            task.wait(3600)
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+LocalPlayersFolder:AddSwitch("Auto Eat Protein Egg Every 1 hour", function(state)
+    autoEatEnabled = state
+end)
+
+
+
+
+local MiscFolder = Main:AddFolder("Misc")
+MiscFolder:AddSwitch("Auto Farm (Equip Any tool)", function(State)
+   autoRepToggle = State
+    if State then
+        task.spawn(function()
+            while autoRepToggle do
+                game:GetService("Players").LocalPlayer:WaitForChild("muscleEvent"):FireServer("rep")
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+MiscFolder:AddLabel("---Script Hub---")
+MiscFolder:AddButton("Permanent ShiftLock", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MiniNoobie/ShiftLockx/main/Shiftlock-MiniNoobie"))()
+end)
+MiscFolder:AddLabel("---Time---")
+MiscFolder:AddButton("Night", function()
+    Lighting.ClockTime = 0
+end)
+MiscFolder:AddButton("Morning", function()
+    Lighting.ClockTime = 6
+end)
+MiscFolder:AddButton("Day", function()
+    Lighting.ClockTime = 12
+end)
+MiscFolder:AddLabel("----Farming----")
+local AutoBrawlFolder = Main:AddFolder("Auto Brawl")
+AutoBrawlFolder:AddSwitch("Auto Win Brawl", function(state)
+    getgenv().autoWinBrawl = state
+    task.spawn(function()
+        while getgenv().autoWinBrawl and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Win")
+            task.wait(1)
+        end
+    end)
+end)
+AutoBrawlFolder:AddSwitch("Auto Join Brawl (For Farming)", function(state)
+    getgenv().autoBrawlFarm = state
+    task.spawn(function()
+        while getgenv().autoBrawlFarm and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Farm")
+            task.wait(1)
+        end
+    end)
+end)
+
+AutoBrawlFolder:AddSwitch("Auto Brawl (God Mode)", function(State)
+  godModeToggle = State
+            if State then
+                task.spawn(function()
+                    while godModeToggle do
+                        game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                        task.wait(0)
+                    end
+                end)
+            end
+end)
+
+
+
+
+local OpStuffFolder = Main:AddFolder("Op stuff (for farm)")
+OpStuffFolder:AddSwitch("Anti Knockback", function(Value)
+ if Value then
+        local playerName = game.Players.LocalPlayer.Name
+        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.MaxForce = Vector3.new(100000, 0, 100000)
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        bodyVelocity.P = 1250
+        bodyVelocity.Parent = rootPart
+    else
+        local playerName = game.Players.LocalPlayer.Name
+        local rootPart = game.Workspace:FindFirstChild(playerName):FindFirstChild("HumanoidRootPart")
+        local existingVelocity = rootPart:FindFirstChild("BodyVelocity")
+        if existingVelocity and existingVelocity.MaxForce == Vector3.new(100000, 0, 100000) then
+            existingVelocity:Destroy()
+        end
+    end
+end)
+OpStuffFolder:AddSwitch("Auto Pushups with Rock (10M) and Auto Punch", function(state)
+    getgenv().autoPushups10M = state
+    task.spawn(function()
+        while getgenv().autoPushups10M and LocalPlayer.Character do
+            local pushups = LocalPlayer.Backpack:FindFirstChild("Pushups") or LocalPlayer.Character:FindFirstChild("Pushups")
+            if pushups then
+                pushups.Parent = LocalPlayer.Character
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+                local rock = Workspace.machinesFolder:FindFirstChild("Ancient Jungle Rock")
+                if rock and LocalPlayer:FindFirstChild("Durability") and LocalPlayer.Durability.Value >= 10000000 then
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 0)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 0)
+                    task.wait()
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 1)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 1)
+                    ReplicatedStorage.muscleEvent:FireServer("punch", "rightHand")
+                    ReplicatedStorage.muscleEvent:FireServer("punch", "leftHand")
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+
+OpStuffFolder:AddSwitch("Free AutoLift Gamepass", function(Value)
+    local gamepassFolder = game:GetService("ReplicatedStorage"):FindFirstChild("gamepassIds")
+    local player = game:GetService("Players").LocalPlayer
+
+    if not gamepassFolder or not player then return end
+
+    if Value then
+        for _, gamepass in pairs(gamepassFolder:GetChildren()) do
+            if not player.ownedGamepasses:FindFirstChild(gamepass.Name) then
+                local value = Instance.new("IntValue")
+                value.Name = gamepass.Name
+                value.Value = gamepass.Value
+                value.Parent = player.ownedGamepasses
+            end
+        end
+    else
+        for _, gamepass in pairs(player.ownedGamepasses:GetChildren()) do
+            gamepass:Destroy()
+        end
+    end
+end)
+
+local parts = {}
+local partSize = 2048
+local totalDistance = 50000
+local startPosition = Vector3.new(-2, -9.5, -2)
+local numberOfParts = math.ceil(totalDistance / partSize)
+
+local function createParts()
+    for x = 0, numberOfParts - 1 do
+        for z = 0, numberOfParts - 1 do
+            local newPartSide = Instance.new("Part")
+            newPartSide.Size = Vector3.new(partSize, 1, partSize)
+            newPartSide.Position = startPosition + Vector3.new(x * partSize, 0, z * partSize)
+            newPartSide.Anchored = true
+            newPartSide.Transparency = 1
+            newPartSide.CanCollide = true
+            newPartSide.Name = "Part_Side_" .. x .. "_" .. z
+            newPartSide.Parent = workspace
+            table.insert(parts, newPartSide)
+            
+            local newPartLeftRight = Instance.new("Part")
+            newPartLeftRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartLeftRight.Position = startPosition + Vector3.new(-x * partSize, 0, z * partSize)
+            newPartLeftRight.Anchored = true
+            newPartLeftRight.Transparency = 1
+            newPartLeftRight.CanCollide = true
+            newPartLeftRight.Name = "Part_LeftRight_" .. x .. "_" .. z
+            newPartLeftRight.Parent = workspace
+            table.insert(parts, newPartLeftRight)
+            
+            local newPartUpLeft = Instance.new("Part")
+            newPartUpLeft.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpLeft.Position = startPosition + Vector3.new(-x * partSize, 0, -z * partSize)
+            newPartUpLeft.Anchored = true
+            newPartUpLeft.Transparency = 1
+            newPartUpLeft.CanCollide = true
+            newPartUpLeft.Name = "Part_UpLeft_" .. x .. "_" .. z
+            newPartUpLeft.Parent = workspace
+            table.insert(parts, newPartUpLeft)
+            
+            local newPartUpRight = Instance.new("Part")
+            newPartUpRight.Size = Vector3.new(partSize, 1, partSize)
+            newPartUpRight.Position = startPosition + Vector3.new(x * partSize, 0, -z * partSize)
+            newPartUpRight.Anchored = true
+            newPartUpRight.Transparency = 1
+            newPartUpRight.CanCollide = true
+            newPartUpRight.Name = "Part_UpRight_" .. x .. "_" .. z
+            newPartUpRight.Parent = workspace
+            table.insert(parts, newPartUpRight)
+        end
+    end
+end
+
+local function makePartsWalkthrough()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = false
+        end
+    end
+end
+
+local function makePartsSolid()
+    for _, part in ipairs(parts) do
+        if part and part.Parent then
+            part.CanCollide = true
+        end
+    end
+end
+
+OpStuffFolder:AddSwitch("Walk on Water", function(bool)
+        if bool then
+        createParts()
+    else
+        makePartsWalkthrough()
+    end
+
+end)
+
+OpStuffFolder:AddButton("Remove Ad Portal", function()
+    for _, portal in pairs(Workspace:GetDescendants()) do
+        if portal.Name:match("AdPortal") then
+            portal:Destroy()
+        end
+    end
+end)
+
+local KillingTab = Window:AddTab("Killing")
+KillingTab:AddSwitch("Auto Equip Punch", function(state)
+    autoEquipPunch = state
+	task.spawn(function()
+		while autoEquipPunch do
+			local punch = LocalPlayer.Backpack:FindFirstChild("Punch")
+			if punch then
+				punch.Parent = LocalPlayer.Character
+			end
+			task.wait(0.1)
+		end
+	end)
+end)
+KillingTab:AddSwitch("Auto Punch {With Movement}", function(state)
+task.spawn(function()
+			while _G.fastHitActive do
+				local punch = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
+				if punch then
+					punch:Activate()
+				end
+				task.wait(0.1)
+			end
+		end)
+	else
+		local punch = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
+		if punch then
+			punch.Parent = LocalPlayer.Backpack
+		end
+	end
+end)
+	
