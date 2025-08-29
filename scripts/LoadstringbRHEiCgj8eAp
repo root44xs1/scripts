@@ -1,0 +1,206 @@
+
+local whitelist = {
+    
+}
+
+local player = game.Players.LocalPlayer
+local playerId = player.UserId
+
+print("👤 Player ID detected:", playerId)
+
+-- Function to check if the player is whitelisted
+local function isPlayerWhitelisted(playerId)
+    for _, id in ipairs(whitelist) do
+        if id == playerId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check if the player is whitelisted
+if not isPlayerWhitelisted(playerId) then
+    warn("❌ Access denied for ID:", playerId)
+    player:Kick(" You are not allowed to use this script. + U Have Been Rebirthed + Doxed")
+    return
+end
+
+print("✅ ID " .. playerId .. " allowed. Loading the script...")
+
+-- Function to safely load a script from a URL
+local function safeLoad(url, name)
+    print("🔄 Loading: " .. name)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+
+    if not success then
+        warn("❌ Loading Failed: " .. name .. " - " .. tostring(result))
+        return nil
+    end
+
+    print("✅ " .. name .. " Successfully Loaded!")
+    return result
+end
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imhenne187/cracking/refs/heads/main/LunaHub/LunaLibrary.lua", true))()
+
+local window = library:AddWindow("ENCRYPTED V2 | Clan Version", {
+    main_color = Color3.fromRGB(0, 0, 0), 
+    min_size = Vector2.new(470, 470), 
+    can_resize = false,
+})
+
+local MainTab = Window:AddTab("Main")
+local LocalPlayersFolder = MainTab:AddFolder("Local Players")
+LocalPlayersFolder:AddSwitch("Auto Eat Protein Egg Every 30 Minutes", function(state)
+    getgenv().autoEatProteinEggActive = state
+    task.spawn(function()
+        while getgenv().autoEatProteinEggActive and LocalPlayer.Character do
+            local egg = LocalPlayer.Backpack:FindFirstChild("Protein Egg") or LocalPlayer.Character:FindFirstChild("Protein Egg")
+            if egg then
+                egg.Parent = LocalPlayer.Character
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(1800)
+        end
+    end)
+end)
+LocalPlayersFolder:AddSwitch("Auto Eat Protein Egg Every 1 hour", function(state)
+    getgenv().autoEatProteinEggHourly = state
+    task.spawn(function()
+        while getgenv().autoEatProteinEggHourly and LocalPlayer.Character do
+            local egg = LocalPlayer.Backpack:FindFirstChild("Protein Egg") or LocalPlayer.Character:FindFirstChild("Protein Egg")
+            if egg then
+                egg.Parent = LocalPlayer.Character
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(3600)
+        end
+    end)
+end)
+local MiscFolder = MainTab:AddFolder("Misc")
+MiscFolder:AddSwitch("Auto Farm (Equip Any tool)", function(state)
+    getgenv().autoFarm = state
+    task.spawn(function()
+        while getgenv().autoFarm and LocalPlayer.Character do
+            for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+                if tool:IsA("Tool") then
+                    tool.Parent = LocalPlayer.Character
+                    ReplicatedStorage.muscleEvent:FireServer("rep")
+                    task.wait(0.1)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+MiscFolder:AddLabel("---Script Hub---")
+MiscFolder:AddButton("Permanent ShiftLock", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MiniNoobie/ShiftLockx/main/Shiftlock-MiniNoobie"))()
+end)
+MiscFolder:AddLabel("---Time---")
+MiscFolder:AddButton("Night", function()
+    Lighting.ClockTime = 0
+end)
+MiscFolder:AddButton("Morning", function()
+    Lighting.ClockTime = 6
+end)
+MiscFolder:AddButton("Day", function()
+    Lighting.ClockTime = 12
+end)
+MiscFolder:AddLabel("----Farming----")
+local AutoBrawlFolder = MainTab:AddFolder("Auto Brawl")
+AutoBrawlFolder:AddSwitch("Auto Win Brawl", function(state)
+    getgenv().autoWinBrawl = state
+    task.spawn(function()
+        while getgenv().autoWinBrawl and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Win")
+            task.wait(1)
+        end
+    end)
+end)
+AutoBrawlFolder:AddSwitch("Auto Join Brawl (For Farming)", function(state)
+    getgenv().autoBrawlFarm = state
+    task.spawn(function()
+        while getgenv().autoBrawlFarm and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Farm")
+            task.wait(1)
+        end
+    end)
+end)
+local OpStuffFolder = MainTab:AddFolder("Op stuff (for farm)")
+OpStuffFolder:AddSwitch("Anti Knockback", function(state)
+    getgenv().antiKnockback = state
+    LocalPlayer.CharacterAdded:Connect(function(char)
+        if getgenv().antiKnockback then
+            char.HumanoidRootPart.Anchored = true
+            task.wait(0.1)
+            char.HumanoidRootPart.Anchored = false
+        end
+    end)
+end)
+OpStuffFolder:AddSwitch("Auto Pushups with Rock (10M) and Auto Punch", function(state)
+    getgenv().autoPushups10M = state
+    task.spawn(function()
+        while getgenv().autoPushups10M and LocalPlayer.Character do
+            local pushups = LocalPlayer.Backpack:FindFirstChild("Pushups") or LocalPlayer.Character:FindFirstChild("Pushups")
+            if pushups then
+                pushups.Parent = LocalPlayer.Character
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+                local rock = Workspace.machinesFolder:FindFirstChild("Ancient Jungle Rock")
+                if rock and LocalPlayer:FindFirstChild("Durability") and LocalPlayer.Durability.Value >= 10000000 then
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 0)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 0)
+                    task.wait()
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 1)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 1)
+                    ReplicatedStorage.muscleEvent:FireServer("punch", "rightHand")
+                    ReplicatedStorage.muscleEvent:FireServer("punch", "leftHand")
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+OpStuffFolder:AddSwitch("Free AutoLift Gamepass", function(state)
+    getgenv().autoLiftGamepass = state
+    task.spawn(function()
+        while getgenv().autoLiftGamepass and LocalPlayer.Character do
+            local gamepasses = ReplicatedStorage:FindFirstChild("gamepassIds")
+            if gamepasses then
+                local ownedGamepasses = LocalPlayer:FindFirstChild("ownedGamepasses") or Instance.new("Folder", LocalPlayer)
+                ownedGamepasses.Name = "ownedGamepasses"
+                local autoLift = ownedGamepasses:FindFirstChild("AutoLift") or Instance.new("IntValue", ownedGamepasses)
+                autoLift.Name = "AutoLift"
+                autoLift.Value = 1
+            end
+            task.wait(1)
+        end
+    end)
+end)
+OpStuffFolder:AddSwitch("Walk on Water", function(state)
+    getgenv().walkOnWater = state
+    if state then
+        local part = Instance.new("Part")
+        part.Size = Vector3.new(1000, 1, 1000)
+        part.Position = Vector3.new(0, 0, 0)
+        part.Anchored = true
+        part.Transparency = 0.5
+        part.CanCollide = true
+        part.Parent = Workspace
+        getgenv().waterPart = part
+    else
+        if getgenv().waterPart then
+            getgenv().waterPart:Destroy()
+            getgenv().waterPart = nil
+        end
+    end
+end)
+OpStuffFolder:AddButton("Remove Ad Portal", function()
+    for _, portal in pairs(Workspace:GetDescendants()) do
+        if portal.Name:match("AdPortal") then
+            portal:Destroy()
+        end
+    end
+end)
