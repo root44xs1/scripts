@@ -1,0 +1,685 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
+local HttpService = game:GetService("HttpService")
+
+local whitelist = {
+    3647903071,4942716436,4260146877,1408609880
+}
+
+local player = game.Players.LocalPlayer
+local playerId = player.UserId
+
+print("👤 Player ID detected:", playerId)
+
+-- Function to check if the player is whitelisted
+local function isPlayerWhitelisted(playerId)
+    for _, id in ipairs(whitelist) do
+        if id == playerId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check if the player is whitelisted
+if not isPlayerWhitelisted(playerId) then
+    warn("❌ Access denied for ID:", playerId)
+    player:Kick(" You are not allowed to use this script. + U Have Been Rebirthed + Doxed")
+    return
+end
+
+print("✅ ID " .. playerId .. " allowed. Loading the script...")
+
+-- Function to safely load a script from a URL
+local function safeLoad(url, name)
+    print("🔄 Loading: " .. name)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+
+    if not success then
+        warn("❌ Loading Failed: " .. name .. " - " .. tostring(result))
+        return nil
+    end
+
+    print("✅ " .. name .. " Successfully Loaded!")
+    return result
+end
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/AOD-RuRu/AoD/refs/heads/main/uiUI", true))()
+
+local window = library:AddWindow("Muscle Legends V2 | Made By Dan | Private Version", {
+    main_color = Color3.fromRGB(0, 0, 0),
+    min_size = Vector2.new(550, 550),
+    can_resize = false,
+})
+
+local Main = window:AddTab("Main")
+
+local folder = Main:AddFolder("Auto Brawl")
+
+local godModeToggle = false
+folder:AddSwitch("Auto Join brawl (God Mode)",function(State)
+   godModeToggle = State
+    if State then
+        task.spawn(function()
+            while godModeToggle do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(0)
+            end
+        end)
+    end
+end)
+
+local autoJoinToggle = false
+folder:AddSwitch("Auto Join Brawl (For Farming)",function(State)
+    autoJoinToggle = State
+    if State then
+        task.spawn(function()
+            while autoJoinToggle do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(2)
+            end
+        end)
+    end
+end)
+
+
+local folder2 = Main:AddFolder("Jungle Gym Farm")
+
+folder2:AddLabel("Jungle Gym")
+
+local autoJungleBench = false
+folder2:AddSwitch("Auto Jungle Bench", function(State)
+    autoJungleBench = State
+    if State then
+        task.spawn(function()
+            while autoJungleBench do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8629.88086, 64.8842468, 1855.03467))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Jungle Bench"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoJungleBarLift = false
+folder2:AddSwitch("Auto Jungle Bar Lift", function(State)
+    autoJungleBarLift = State
+    if State then
+        task.spawn(function()
+            while autoJungleBarLift do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8678.05566, 14.5030098, 2089.25977))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Jungle Bar Lift"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoJungleSquat = false
+folder2:AddSwitch("Auto Jungle Squat", function(State)
+    autoJungleSquat = State
+    if State then
+        task.spawn(function()
+            while autoJungleSquat do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8374.25586, 34.5933418, 2932.44995))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Jungle Squat"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local folder3 = Main:AddFolder("Auto Gym")
+
+folder3:AddLabel("King Island")
+
+local autoMuscleKingLift = false
+folder3:AddSwitch("Auto Muscle King Lift", function(State)
+    autoMuscleKingLift = State
+    if State then
+        task.spawn(function()
+            while autoMuscleKingLift do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8772.97266, 24.4272194, -5638.37402))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Muscle King Lift"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoMuscleKingBoulder = false
+folder3:AddSwitch("Auto Muscle King Boulder", function(State)
+    autoMuscleKingBoulder = State
+    if State then
+        task.spawn(function()
+            while autoMuscleKingBoulder do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8986.61621, 30.0510483, -5647.14404))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["King Boulder"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+folder3:AddLabel("Legends Island")
+
+local autoLegendLift = false
+folder3:AddSwitch("Auto Legend Lift", function(State)
+    autoLegendLift = State
+    if State then
+        task.spawn(function()
+            while autoLegendLift do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(4551.51514, 997.727234, -4018.90186))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Legends Lift"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoLegendPress = false
+folder3:AddSwitch("Auto Legend Press", function(State)
+    autoLegendPress = State
+    if State then
+        task.spawn(function()
+            while autoLegendPress do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(4100.08154, 1016.20416, -3800.4187))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Legends Press"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local folder4 = Main:AddFolder("OP things/farm")
+
+folder4:AddSwitch("Anti KnockBack",function()
+    
+end)
+
+folder4:AddLabel("-----| Weight + Punch |-----")
+
+folder4:AddSwitch("Auto Pushups + Auto Punch Rock",function()
+    
+end)
+
+folder4:AddSwitch("Auto Situp + Auto Punch rock",function()
+    
+end)
+
+folder4:AddSwitch("Auto Handstands + Auto Punch Rock",function()
+    
+end)
+
+folder4:AddSwitch("Auto Weight + Auto Punch Rock",function()
+    
+end)
+
+local FarmPlus = window:AddTab("Farm++")
+
+local selectrock = ""
+
+function gettool()
+    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        if v.Name == "Punch" and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end
+    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+end
+
+local folder5 = FarmPlus:AddFolder("Auto Rock")
+
+folder5:AddSwitch("Auto Punch Jungle Rock (10M)",function(Value)
+     selectrock = "Ancient Jungle Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 10000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 10000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+folder5:AddSwitch("Auto Punch Jungle Rock (5M)",function(Value)
+    selectrock = "Muscle King Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 5000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 5000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+folder5:AddSwitch("Auto Punch Jungle Rock (1M)",function(Value)
+    selectrock = "Legend Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 1000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 1000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+local eggs = window:AddTab("Eggs")
+
+local Killing = window:AddTab("Killing")
+
+Killing:AddSwitch("Auto Punch",function()
+    autoPunchNoAnim = state
+	task.spawn(function()
+		while autoPunchNoAnim do
+			local punch = LocalPlayer.Backpack:FindFirstChild("Punch") or LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
+			if punch then
+				if punch.Parent ~= LocalPlayer.Character then
+					punch.Parent = LocalPlayer.Character
+				end
+				LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+				LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+			else
+				autoPunchNoAnim = false
+			end
+			task.wait(0.01)
+		end
+	end)
+end)
+
+Killing:AddSwitch("Auto Punch {With Movement}",function(state)
+    	_G.fastHitActive = state
+	if state then
+		task.spawn(function()
+			while _G.fastHitActive do
+				local punch = LocalPlayer.Backpack:FindFirstChild("Punch")
+				if punch then
+					punch.Parent = LocalPlayer.Character
+					if punch:FindFirstChild("attackTime") then
+						punch.attackTime.Value = 0
+					end
+				end
+				task.wait(0.1)
+			end
+		end)
+		task.spawn(function()
+			while _G.fastHitActive do
+				local punch = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
+				if punch then
+					punch:Activate()
+				end
+				task.wait(0.1)
+			end
+		end)
+	else
+		local punch = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Punch")
+		if punch then
+			punch.Parent = LocalPlayer.Backpack
+		end
+	end
+end)
+
+Killing:AddSwitch("Fast Punch",function()
+    
+end)
+
+Killing:AddLabel("")
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function checkCharacter()
+    if not LocalPlayer.Character then
+        repeat task.wait() until LocalPlayer.Character
+    end
+    return LocalPlayer.Character
+end
+
+local function gettool()
+    for _, v in pairs(LocalPlayer.Backpack:GetChildren()) do
+        if v.Name == "Punch" and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end
+    LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+    LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+end
+
+local function isPlayerAlive(player)
+    return player and player.Character
+       and player.Character:FindFirstChild("HumanoidRootPart")
+       and player.Character:FindFirstChild("Humanoid")
+       and player.Character.Humanoid.Health > 0
+end
+
+local function killPlayer(target)
+    if not isPlayerAlive(target) then return end
+    local character = checkCharacter()
+    if character and character:FindFirstChild("LeftHand") then
+        pcall(function()
+            firetouchinterest(target.Character.HumanoidRootPart, character.LeftHand, 0)
+            firetouchinterest(target.Character.HumanoidRootPart, character.LeftHand, 1)
+            gettool()
+        end)
+    end
+end
+
+local function getPlayerDisplayText(player)
+    return player.DisplayName .. " | " .. player.Name
+end
+
+_G.whitelistedPlayers = _G.whitelistedPlayers or {}
+_G.blacklistedPlayers = _G.blacklistedPlayers or {}
+
+local function isWhitelisted(player)
+    for _, name in ipairs(_G.whitelistedPlayers) do
+        if name:lower() == player.Name:lower() then
+            return true
+        end
+    end
+    return false
+end
+
+local function isBlacklisted(player)
+    for _, name in ipairs(_G.blacklistedPlayers) do
+        if name:lower() == player.Name:lower() then
+            return true
+        end
+    end
+    return false
+end
+
+local whitelistTextBox = Killing:AddTextBox("Whitelist", function(inputText)
+    local playerName = inputText:match("^%s*(.-)%s*$")
+    if playerName ~= "" then
+        for _, name in ipairs(_G.whitelistedPlayers) do
+            if name:lower() == playerName:lower() then
+                return
+            end
+        end
+        table.insert(_G.whitelistedPlayers, playerName)
+    end
+end)
+
+local whitelistDropdown = Killing:AddDropdown("Whitelist", function(selectedText)
+    local playerName = selectedText:match("| (.+)$")
+    if playerName then
+        playerName = playerName:match("^%s*(.-)%s*$")
+        for _, name in ipairs(_G.whitelistedPlayers) do
+            if name:lower() == playerName:lower() then return end
+        end
+        table.insert(_G.whitelistedPlayers, playerName)
+    end
+end)
+
+Killing:AddButton("Clear Whitelist", function()
+    _G.whitelistedPlayers = {}
+end)
+
+Killing:AddSwitch("Whitelist Friends", function(state)
+    if state then
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player:IsFriendsWith(LocalPlayer.UserId) then
+                local already = false
+                for _, name in ipairs(_G.whitelistedPlayers) do
+                    if name:lower() == player.Name:lower() then
+                        already = true
+                        break
+                    end
+                end
+                if not already then
+                    table.insert(_G.whitelistedPlayers, player.Name)
+                end
+            end
+        end
+    end
+end)
+
+local blacklistTextbox = Killing:AddTextBox("Blacklist", function(inputText)
+    local playerName = inputText:match("^%s*(.-)%s*$") -- Remove espaÃƒÆ’Ã‚Â§os no inÃƒÆ’Ã‚Â­cio/fim
+    if playerName ~= "" then
+        for _, name in ipairs(_G.blacklistedPlayers) do
+            if name:lower() == playerName:lower() then
+                return
+            end
+        end
+        table.insert(_G.blacklistedPlayers, playerName)
+    end
+end, "Enter the player name")
+
+local blacklistDropdown = Killing:AddDropdown("Blacklist", function(selectedText)
+    local playerName = selectedText:match("| (.+)$")
+    if playerName then
+        playerName = playerName:match("^%s*(.-)%s*$")
+        for _, name in ipairs(_G.blacklistedPlayers) do
+            if name:lower() == playerName:lower() then return end
+        end
+        table.insert(_G.blacklistedPlayers, playerName)
+    end
+end)
+
+Killing:AddButton("Clear Blacklist", function()
+    _G.blacklistedPlayers = {}
+end)
+
+Killing:AddSwitch("Kill List", function(state)
+    _G.killBlacklistedOnly = state
+    if state then
+        if not _G.blacklistKillConnection then
+            _G.blacklistKillConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer and isBlacklisted(player) then
+                        killPlayer(player)
+                    end
+                end
+            end)
+        end
+    else
+        if _G.blacklistKillConnection then
+            _G.blacklistKillConnection:Disconnect()
+            _G.blacklistKillConnection = nil
+        end
+    end
+end)
+
+Killing:AddSwitch("Kill All", function(state)
+    _G.killAll = state
+    if state then
+        if not _G.killAllConnection then
+            _G.killAllConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                for _, player in ipairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer and not isWhitelisted(player) then
+                        killPlayer(player)
+                    end
+                end
+            end)
+        end
+    else
+        if _G.killAllConnection then
+            _G.killAllConnection:Disconnect()
+            _G.killAllConnection = nil
+        end
+    end
+end)
+
+Killing:AddTextBox("Range (1-140)", function(text)
+    local range = tonumber(text)
+    if range then
+        _G.deathRingRange = math.clamp(range, 1, 140)
+    end
+end)
+
+Killing:AddTextBox("Player Name (Optional)", function(text)
+    _G.targetPlayerName = text
+end)
+
+Killing:AddSwitch("Protect Player", function(state)
+    _G.DeathRingProtectionEnabled = state
+    
+    if state then
+        if not _G.DeathRingConnection then
+            _G.DeathRingConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                if _G.DeathRingProtectionEnabled then
+                    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+                        if whitelist[player.Name] and player ~= game.Players.LocalPlayer then
+                            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                                _G.ProtectedPlayers[player.Name] = true
+                                
+                                for _, enemy in ipairs(game:GetService("Players"):GetPlayers()) do
+                                    if not whitelist[enemy.Name] and enemy ~= game.Players.LocalPlayer then
+                                        if enemy.Character and enemy.Character:FindFirstChild("HumanoidRootPart") then
+                                            local distance = (player.Character.HumanoidRootPart.Position - enemy.Character.HumanoidRootPart.Position).Magnitude
+                                            if distance <= (_G.deathRingRange or 20) then
+                                                killPlayer(enemy)
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    else
+        if _G.DeathRingConnection then
+            _G.DeathRingConnection:Disconnect()
+            _G.DeathRingConnection = nil
+        end
+        _G.ProtectedPlayers = {}
+    end
+end)
+
+Killing:AddSwitch("Death Ring", function(state)
+    _G.deathRingEnabled = state
+    if state then
+        if not _G.deathRingConnection then
+            _G.deathRingConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                local character = checkCharacter()
+                local myPos = character and character:FindFirstChild("HumanoidRootPart") and character.HumanoidRootPart.Position
+                if myPos then
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player ~= LocalPlayer and not isWhitelisted(player) and isPlayerAlive(player) then
+                            if (myPos - player.Character.HumanoidRootPart.Position).Magnitude <= (_G.deathRingRange or 20) then
+                                killPlayer(player)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    else
+        if _G.deathRingConnection then
+            _G.deathRingConnection:Disconnect()
+            _G.deathRingConnection = nil
+        end
+    end
+end)
+
+Killing:AddSwitch("Invisible", function(state)
+
+end)
+
+Killing:AddLabel("")
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        local displayText = getPlayerDisplayText(player)
+        whitelistDropdown:Add(displayText)
+        blacklistDropdown:Add(displayText)
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    if player ~= LocalPlayer then
+        local displayText = getPlayerDisplayText(player)
+        whitelistDropdown:Add(displayText)
+        blacklistDropdown:Add(displayText)
+    end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    local displayText = getPlayerDisplayText(player)
+    whitelistDropdown:Remove(displayText)
+    blacklistDropdown:Remove(displayText)
+end)
+
+local nothingLabel = Killing:AddLabel("")
+
+local whitelistLabel = Killing:AddLabel("Whitelisted Players:\nNone")
+
+local nothingLabel = Killing:AddLabel("")
+
+local blacklistLabel = Killing:AddLabel("Blacklisted Players:\nNone")
+
+local function UpdateLabels()
+    if #_G.whitelistedPlayers == 0 then
+        whitelistLabel.Text = "Whitelisted Players:\nNone"
+    else
+        whitelistLabel.Text = "Whitelisted Players:\n" .. table.concat(_G.whitelistedPlayers, "\n")
+    end
+
+    if #_G.blacklistedPlayers == 0 then
+        blacklistLabel.Text = "Blacklisted Players:\nNone"
+    else
+        blacklistLabel.Text = "Blacklisted Players:\n" .. table.concat(_G.blacklistedPlayers, "\n")
+    end
+end
+
+game:GetService("RunService").Heartbeat:Connect(UpdateLabels)
+
+
+local players = window:AddTab("Players")
+
+local teleports = window:AddTab("Teleports")
+
+local credits = window:AddTab("Credits")
+
+Credits:AddLabel("Script Made By Dan").textsize = 18
+
+Credits:AddLabel("Private Version").textsize = 18
