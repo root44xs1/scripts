@@ -1,0 +1,324 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local Lighting = game:GetService("Lighting")
+local HttpService = game:GetService("HttpService")
+
+local whitelist = {
+    3647903071,4942716436,4260146877,1408609880
+}
+
+local player = game.Players.LocalPlayer
+local playerId = player.UserId
+
+print("👤 Player ID detected:", playerId)
+
+-- Function to check if the player is whitelisted
+local function isPlayerWhitelisted(playerId)
+    for _, id in ipairs(whitelist) do
+        if id == playerId then
+            return true
+        end
+    end
+    return false
+end
+
+-- Check if the player is whitelisted
+if not isPlayerWhitelisted(playerId) then
+    warn("❌ Access denied for ID:", playerId)
+    player:Kick(" You are not allowed to use this script. + U Have Been Rebirthed + Doxed")
+    return
+end
+
+print("✅ ID " .. playerId .. " allowed. Loading the script...")
+
+-- Function to safely load a script from a URL
+local function safeLoad(url, name)
+    print("🔄 Loading: " .. name)
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+
+    if not success then
+        warn("❌ Loading Failed: " .. name .. " - " .. tostring(result))
+        return nil
+    end
+
+    print("✅ " .. name .. " Successfully Loaded!")
+    return result
+end
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/imhenne187/cracking/refs/heads/main/LunaHub/LunaLibrary.lua", true))()
+
+local window = library:AddWindow("Muscle Legends V2 | Made By Dan | Private Version", {
+    main_color = Color3.fromRGB(0, 0, 0),
+    min_size = Vector2.new(500, 500),
+    can_resize = false,
+})
+
+local Main = window:AddTab("Main")
+
+local folder = Main:AddFolder("Auto Brawl")
+
+local godModeToggle = false
+folder:AddSwitch("Auto Join brawl (God Mode)",function(State)
+   godModeToggle = State
+    if State then
+        task.spawn(function()
+            while godModeToggle do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(0)
+            end
+        end)
+    end
+end)
+
+local autoJoinToggle = false
+folder:AddSwitch("Auto Join Brawl (For Farming)",function(State)
+    autoJoinToggle = State
+    if State then
+        task.spawn(function()
+            while autoJoinToggle do
+                game:GetService("ReplicatedStorage").rEvents.brawlEvent:FireServer("joinBrawl")
+                task.wait(2)
+            end
+        end)
+    end
+end)
+
+
+local folder2 = Main:AddFolder("Jungle Gym Farm")
+
+folder2:AddLabel("Jungle Gym")
+
+local autoJungleBench = false
+folder2:AddSwitch("Auto Jungle Bench", function(State)
+    autoJungleBench = State
+    if State then
+        task.spawn(function()
+            while autoJungleBench do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8629.88086, 64.8842468, 1855.03467))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Jungle Bench"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoJungleBarLift = false
+folder2:AddSwitch("Auto Jungle Bar Lift", function(State)
+    autoJungleBarLift = State
+    if State then
+        task.spawn(function()
+            while autoJungleBarLift do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8678.05566, 14.5030098, 2089.25977))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Jungle Bar Lift"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoJungleSquat = false
+folder2:AddSwitch("Auto Jungle Squat", function(State)
+    autoJungleSquat = State
+    if State then
+        task.spawn(function()
+            while autoJungleSquat do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8374.25586, 34.5933418, 2932.44995))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Jungle Squat"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local folder3 = Main:AddFolder("Auto Gym")
+
+folder3:AddLabel("King Island")
+
+local autoMuscleKingLift = false
+folder3:AddSwitch("Auto Muscle King Lift", function(State)
+    autoMuscleKingLift = State
+    if State then
+        task.spawn(function()
+            while autoMuscleKingLift do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8772.97266, 24.4272194, -5638.37402))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Muscle King Lift"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoMuscleKingBoulder = false
+folder3:AddSwitch("Auto Muscle King Boulder", function(State)
+    autoMuscleKingBoulder = State
+    if State then
+        task.spawn(function()
+            while autoMuscleKingBoulder do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-8986.61621, 30.0510483, -5647.14404))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["King Boulder"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+folder3:AddLabel("Legends Island")
+
+local autoLegendLift = false
+folder3:AddSwitch("Auto Legend Lift", function(State)
+    autoLegendLift = State
+    if State then
+        task.spawn(function()
+            while autoLegendLift do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(4551.51514, 997.727234, -4018.90186))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Legends Lift"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local autoLegendPress = false
+folder3:AddSwitch("Auto Legend Press", function(State)
+    autoLegendPress = State
+    if State then
+        task.spawn(function()
+            while autoLegendPress do
+                game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(4100.08154, 1016.20416, -3800.4187))
+                game:GetService("ReplicatedStorage").rEvents.machineInteractRemote:InvokeServer("useMachine", workspace.machinesFolder["Legends Press"].interactSeat)
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+local folder4 = Main:AddFolder("OP things/farm")
+
+folder4:AddSwitch("Anti KnockBack",function()
+    
+end)
+
+folder4:AddLabel("-----| Weight + Punch |-----")
+
+folder4:AddSwitch("Auto Pushups + Auto Punch Rock",function()
+    
+end)
+
+folder4:AddSwitch("Auto Situp + Auto Punch rock",function()
+    
+end)
+
+folder4:AddSwitch("Auto Handstands + Auto Punch Rock",function()
+    
+end)
+
+folder4:AddSwitch("Auto Weight + Auto Punch Rock",function()
+    
+end)
+
+local FarmPlus = window:AddTab("Farm++")
+
+local selectrock = ""
+
+function gettool()
+    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        if v.Name == "Punch" and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end
+    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "leftHand")
+    game:GetService("Players").LocalPlayer.muscleEvent:FireServer("punch", "rightHand")
+end
+
+local folder5 = FarmPlus:AddFolder("Auto Rock")
+
+folder5:AddSwitch("Auto Punch Jungle Rock (10M)",function(Value)
+     selectrock = "Ancient Jungle Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 10000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 10000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+folder5:AddSwitch("Auto Punch Jungle Rock (5M)",function(Value)
+    selectrock = "Muscle King Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 5000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 5000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+folder5:AddSwitch("Auto Punch Jungle Rock (1M)",function(Value)
+    selectrock = "Legend Gym Rock"
+    getgenv().autoFarm = Value
+    
+    task.spawn(function()
+        while getgenv().autoFarm do
+            task.wait()
+            if not getgenv().autoFarm then break end
+            
+            if game:GetService("Players").LocalPlayer.Durability.Value >= 1000000 then
+                for i, v in pairs(game:GetService("Workspace").machinesFolder:GetDescendants()) do
+                    if v.Name == "neededDurability" and v.Value == 1000000 and game.Players.LocalPlayer.Character:FindFirstChild("LeftHand") and game.Players.LocalPlayer.Character:FindFirstChild("RightHand") then
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.RightHand, 1)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 0)
+                        firetouchinterest(v.Parent.Rock, game:GetService("Players").LocalPlayer.Character.LeftHand, 1)
+                        gettool()
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+local eggs = window:AddTab("Eggs")
+
+local killing = window:AddTab("Killing")
+
+local players = window:AddTab("Players")
+
+local teleports = window:AddTab("teleports")
+
+local credits = window:AddTab("credits")
+
+Credits:AddLabel("Script Made By Dan").textsize = 18
+
+Credits:AddLabel("Private Version").textsize = 18
