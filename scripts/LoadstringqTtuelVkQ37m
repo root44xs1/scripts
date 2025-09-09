@@ -1,0 +1,276 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local VirtualUser = game:GetService("VirtualUser")
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/CAXAP26BKyCH/library/refs/heads/main/Uilibrary"))()
+local Window = Library:AddWindow("Doca V1 Free Version", {
+    main_color = Color3.fromRGB(255, 0, 0),
+    min_size = Vector2.new(500, 600),
+    can_resize = true
+})
+
+local MainTab = Window:AddTab("Main")
+local MiscFolder = MainTab:AddFolder("Misc")
+MiscFolder:AddButton("Auto Weight (Equip any tool)", function()
+    task.spawn(function()
+        while true do
+            for _, tool in pairs(LocalPlayer.Backpack:GetChildren()) do
+                if tool:IsA("Tool") then
+                    tool.Parent = LocalPlayer.Character
+                    ReplicatedStorage.muscleEvent:FireServer("rep")
+                    task.wait(0.1)
+                end
+            end
+            task.wait()
+        end
+    end)
+end)
+MiscFolder:AddButton("Claim All Chest V2", function()
+    for _, chest in pairs(Workspace:GetDescendants()) do
+        if chest.Name:match("Chest") then
+            fireclickdetector(chest:FindFirstChild("ClickDetector"))
+            task.wait(0.1)
+        end
+    end
+end)
+MiscFolder:AddLabel("---Script Hub---")
+MiscFolder:AddButton("Permanent ShiftLock", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MiniNoobie/ShiftLockx/main/Shiftlock-MiniNoobie"))()
+end)
+MiscFolder:AddLabel("---Time---")
+MiscFolder:AddButton("Night", function()
+    ReplicatedStorage.rEvents.changeTimeRemote:InvokeServer("Night")
+end)
+MiscFolder:AddButton("Morning", function()
+    ReplicatedStorage.rEvents.changeTimeRemote:InvokeServer("Morning")
+end)
+MiscFolder:AddButton("Day", function()
+    ReplicatedStorage.rEvents.changeTimeRemote:InvokeServer("Day")
+end)
+MiscFolder:AddLabel("----Farming----")
+local AutoBrawlFolder = MainTab:AddFolder("Auto Brawl")
+AutoBrawlFolder:AddSwitch("Auto Join Brawl (For Farming)", function(state)
+    getgenv().autoBrawlFarm = state
+    task.spawn(function()
+        while getgenv().autoBrawlFarm do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Farm")
+            task.wait(1)
+        end
+    end)
+end)
+AutoBrawlFolder:AddSwitch("Auto Join Brawl (God Mode)", function(state)
+    getgenv().autoBrawlGod = state
+    task.spawn(function()
+        while getgenv().autoBrawlGod do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("GodMode")
+            task.wait(1)
+        end
+    end)
+end)
+AutoBrawlFolder:AddSwitch("Invisible Join Brawl", function(state)
+    getgenv().invisBrawl = state
+    task.spawn(function()
+        while getgenv().invisBrawl do
+            ReplicatedStorage.rEvents.joinBrawl:FireServer("Invisible")
+            task.wait(1)
+        end
+    end)
+end)
+local AutoGymFolder = MainTab:AddFolder("Auto Gym")
+AutoGymFolder:AddLabel("King Gym")
+AutoGymFolder:AddSwitch("Auto Muscle King Lift", function(state)
+    getgenv().automlking = state
+    task.spawn(function()
+        while getgenv().automlking and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Muscle King Lift")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Muscle King Bench", function(state)
+    getgenv().autoKingBench = state
+    task.spawn(function()
+        while getgenv().autoKingBench and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Muscle King Bench")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Muscle King Squat", function(state)
+    getgenv().autoKingSquat = state
+    task.spawn(function()
+        while getgenv().autoKingSquat and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Muscle King Squat")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Muscle King Boulder", function(state)
+    getgenv().autoKingBoulder = state
+    task.spawn(function()
+        while getgenv().autoKingBoulder and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Muscle King Boulder")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddLabel("Legends Gym")
+AutoGymFolder:AddSwitch("Auto Legends Press", function(state)
+    getgenv().autolegends = state
+    task.spawn(function()
+        while getgenv().autolegends and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Legends Press")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Legends Throw", function(state)
+    getgenv().autolegendsThrow = state
+    task.spawn(function()
+        while getgenv().autolegendsThrow and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Legends Throw")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Legends Pullup", function(state)
+    getgenv().autolegendsPullup = state
+    task.spawn(function()
+        while getgenv().autolegendsPullup and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Legends Pullup")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Legends Squat", function(state)
+    getgenv().autolegendsSquat = state
+    task.spawn(function()
+        while getgenv().autolegendsSquat and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Legends Squat")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+AutoGymFolder:AddSwitch("Auto Legends Lift", function(state)
+    getgenv().autolegendsLift = state
+    task.spawn(function()
+        while getgenv().autolegendsLift and LocalPlayer.Character do
+            local machine = Workspace.machinesFolder:FindFirstChild("Legends Lift")
+            if machine then
+                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(machine.interactSeat.Position)
+                ReplicatedStorage.rEvents.machineInteractRemote:InvokeServer("useMachine", machine)
+                ReplicatedStorage.muscleEvent:FireServer("rep")
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+local OpStuffFolder = MainTab:AddFolder("Op stuff (for farm)")
+OpStuffFolder:AddSwitch("Anti Knockback", function(state)
+    getgenv().antiKnockback = state
+    LocalPlayer.CharacterAdded:Connect(function(char)
+        if getgenv().antiKnockback then
+            char.HumanoidRootPart.Anchored = true
+            task.wait(0.1)
+            char.HumanoidRootPart.Anchored = false
+        end
+    end)
+end)
+OpStuffFolder:AddSwitch("Auto Glitch (5M)", function(state)
+    getgenv().autoGlitch5M = state
+    task.spawn(function()
+        while getgenv().autoGlitch5M and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.glitchEvent:FireServer("5M")
+            task.wait(0.1)
+        end
+    end)
+end)
+OpStuffFolder:AddSwitch("Auto Glitch (1M)", function(state)
+    getgenv().autoGlitch1M = state
+    task.spawn(function()
+        while getgenv().autoGlitch1M and LocalPlayer.Character do
+            ReplicatedStorage.rEvents.glitchEvent:FireServer("1M")
+            task.wait(0.1)
+        end
+    end)
+end)
+OpStuffFolder:AddSwitch("Auto Pushups with Rock (5M) and Auto Punch", function(state)
+    getgenv().autoPushups5M = state
+    task.spawn(function()
+        while getgenv().autoPushups5M and LocalPlayer.Character do
+            local punch = LocalPlayer.Backpack:FindFirstChild("Pushups") or LocalPlayer.Character:FindFirstChild("Pushups")
+            if punch then
+                punch.Parent = LocalPlayer.Character
+                ReplicatedStorage.muscleEvent:FireServer("punch", "rightHand")
+                ReplicatedStorage.muscleEvent:FireServer("punch", "leftHand")
+                local rock = Workspace.machinesFolder:FindFirstChild("Punching Rock")
+                if rock then
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 0)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 0)
+                    task.wait()
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.RightHand, 1)
+                    firetouchinterest(rock.Rock, LocalPlayer.Character.LeftHand, 1)
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end)
+OpStuffFolder:AddButton("Remove Ad Portal", function()
+    for _, portal in pairs(Workspace:GetDescendants()) do
+        if portal.Name:match("AdPortal") then
+            portal:Destroy()
+        end
+    end
+end)
+OpStuffFolder:AddButton("Walk on Water", function()
+    local waterPart = Instance.new("Part")
+    waterPart.Parent = Workspace
+    waterPart.Anchored = true
+    waterPart.Position = Vector3.new(0, 0, 0)
+    waterPart.Size = Vector3.new(1000, 1, 1000)
+    waterPart.Transparency = 0.5
+end)
